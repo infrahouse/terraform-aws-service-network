@@ -32,6 +32,9 @@ format:  ## Format terraform files
 	terraform fmt -recursive
 	black tests
 
+.PHONY: lint
+lint:  ## Run code style checks
+	terraform fmt --check -recursive
 
 .PHONY: test
 test:  ## Run tests on the module
