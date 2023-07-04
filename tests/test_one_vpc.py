@@ -3,7 +3,7 @@ from pprint import pformat
 import pytest
 from infrahouse_toolkit.terraform import terraform_apply
 
-from tests.conftest import create_tf_conf
+from tests.conftest import create_tf_conf, TRACE_TERRAFORM
 
 
 @pytest.mark.parametrize(
@@ -109,7 +109,7 @@ def test_service_network(
         subnets=subnets,
     ):
         with terraform_apply(
-            tf_dir, json_output=True, var_file="terraform.tfvars", enable_trace=True
+            tf_dir, json_output=True, var_file="terraform.tfvars", enable_trace=TRACE_TERRAFORM
         ) as tf_out:
             response = ec2_client.describe_vpcs(
                 Filters=[
