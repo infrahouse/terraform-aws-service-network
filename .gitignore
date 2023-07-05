@@ -38,3 +38,4 @@ test.out
 docs/_build/
 /.pytest_cache/
 .terraform.lock.hcl
+/test_data/service_network/terraform.tfvars
