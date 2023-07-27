@@ -1,6 +1,3 @@
-[![Documentation
-Status](https://readthedocs.org/projects/terraform-aws-service-network/badge/?version=latest)](https://terraform-aws-service-network.readthedocs.io/en/latest/?badge=latest)
-
 Service network is a VPC that hosts one logical unit of services. It can
 be one service like MySQL, or it can comprise several services. For
 example, a website with HTTP service and MySQL service.
