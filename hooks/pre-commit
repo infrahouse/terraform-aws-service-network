@@ -6,6 +6,3 @@ for f in ${modified_files}
 do
   git add "$f"
 done
-
-pandoc -s -t gfm -o README.md README.rst
-git add README.md
