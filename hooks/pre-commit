@@ -7,5 +7,5 @@ do
   git add "$f"
 done
 
-pandoc -s README.rst -o README.md
+pandoc -s -t gfm -o README.md README.rst
 git add README.md
