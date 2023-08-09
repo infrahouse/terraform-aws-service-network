@@ -35,7 +35,7 @@ resource "aws_nat_gateway" "nat_gw" {
 # Each NAT gateway needs an elastic IP
 resource "aws_eip" "nat_eip" {
   for_each = toset([for s in local.subnets_with_nat : s.cidr])
-  vpc      = true
+  domain   = "vpc"
   tags = merge(
     var.tags,
     {

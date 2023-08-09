@@ -109,7 +109,10 @@ def test_service_network(
         subnets=subnets,
     ):
         with terraform_apply(
-            tf_dir, json_output=True, var_file="terraform.tfvars", enable_trace=TRACE_TERRAFORM
+            tf_dir,
+            json_output=True,
+            var_file="terraform.tfvars",
+            enable_trace=TRACE_TERRAFORM,
         ) as tf_out:
             response = ec2_client.describe_vpcs(
                 Filters=[
