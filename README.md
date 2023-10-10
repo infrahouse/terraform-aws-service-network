@@ -1,19 +1,19 @@
 ![Service Network](https://github.com/infrahouse/terraform-aws-service-network/assets/1763754/14018b73-7e3c-4687-8a96-89fb1c5895c0)
-Service network is a VPC that hosts one logical unit of services. It can
+A service network is a VPC that hosts one logical unit of services. It can
 be one service like MySQL, or it can comprise several services. For
 example, a website with HTTP service and MySQL service.
 
 One service network is an island. Instances inside the island can
-communicate to each other and outside world.
+communicate with each other and the outside world.
 
-Two different service networks cannot communicate to each other. This is
+Two different service networks cannot communicate with each other. This is
 not a limitation but a security feature.
 
-There is a special kind of service network - management service network.
-It is a bridge between other service network. The management service
-network can communicate to all other service networks. The management
+There is a special kind of service network - a management service network.
+It is a bridge between other service networks. The management service
+network can communicate with all other service networks. The management
 network is needed to host common services like Chef server, bastion
-hosts etc.
+hosts, etc.
 
 # Usage
 
