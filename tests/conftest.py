@@ -13,6 +13,7 @@ TEST_ACCOUNT = "303467602807"
 TEST_ROLE_ARN = "arn:aws:iam::303467602807:role/service-network-tester"
 DEFAULT_PROGRESS_INTERVAL = 10
 TRACE_TERRAFORM = False
+DESTROY_AFTER = True
 
 
 LOG = logging.getLogger(__name__)

@@ -6,7 +6,7 @@ variable "region" {}
 
 variable "service_name" {
   description = "Descriptive name of a service that will use this VPC"
-  default     = "test_data/service_network"
+  default     = "my service"
 }
 
 variable "management_cidr_block" {
