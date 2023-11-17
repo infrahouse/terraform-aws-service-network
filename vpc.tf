@@ -7,7 +7,7 @@ resource "aws_vpc" "vpc" {
   tags = merge(
     var.tags,
     {
-      "Name"        = "VPC ${var.vpc_cidr_block}"
+      "Name"        = "VPC for ${var.service_name} (${var.environment}) ${var.vpc_cidr_block}"
       "environment" = var.environment
       "service"     = var.service_name
       "management"  = local.is_management_network
