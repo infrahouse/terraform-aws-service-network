@@ -13,4 +13,7 @@ resource "aws_vpc" "vpc" {
       "management"  = local.is_management_network
     }
   )
+  lifecycle {
+    create_before_destroy = true
+  }
 }

@@ -84,13 +84,13 @@ module "website" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.67 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.11 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.67 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.11 |
 
 ## Modules
 
@@ -138,6 +138,7 @@ No modules.
 | <a name="output_internet_gateway_id"></a> [internet\_gateway\_id](#output\_internet\_gateway\_id) | n/a |
 | <a name="output_is_management_network"></a> [is\_management\_network](#output\_is\_management\_network) | n/a |
 | <a name="output_management_cidr_block"></a> [management\_cidr\_block](#output\_management\_cidr\_block) | n/a |
+| <a name="output_route_table_all_ids"></a> [route\_table\_all\_ids](#output\_route\_table\_all\_ids) | n/a |
 | <a name="output_subnet_all_ids"></a> [subnet\_all\_ids](#output\_subnet\_all\_ids) | n/a |
 | <a name="output_subnet_private_ids"></a> [subnet\_private\_ids](#output\_subnet\_private\_ids) | n/a |
 | <a name="output_subnet_public_ids"></a> [subnet\_public\_ids](#output\_subnet\_public\_ids) | n/a |

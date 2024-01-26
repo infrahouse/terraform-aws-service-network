@@ -34,3 +34,9 @@ output "subnet_public_ids" {
     for subnet in aws_subnet.all : subnet.id if subnet.map_public_ip_on_launch == true
   ]
 }
+
+output "route_table_all_ids" {
+  value = [
+    for subnet in aws_subnet.all : aws_route_table.all[subnet.cidr_block].id
+  ]
+}
