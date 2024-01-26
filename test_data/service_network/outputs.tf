@@ -17,3 +17,7 @@ output "internet_gateway_id" {
 output "vpc_id" {
   value = module.test_network.vpc_id
 }
+
+output "route_table_all" {
+  value = module.test_network.route_table_all_ids
+}
