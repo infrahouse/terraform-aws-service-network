@@ -28,3 +28,7 @@ variable "subnets" {
 variable "vpc_cidr_block" {
   description = "Block of IP addresses used for this VPC"
 }
+
+variable "restrict_all_traffic" {
+  type = bool
+}

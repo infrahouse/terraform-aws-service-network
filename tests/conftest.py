@@ -60,7 +60,7 @@ def update_source(path, module_path):
 
 
 @contextmanager
-def create_tf_conf(tf_dir, region, management_cidr_block, vpc_cidr_block, subnets):
+def create_tf_conf(tf_dir, region, management_cidr_block, vpc_cidr_block, subnets, restrict_all_traffic: bool):
     config_file = osp.join(tf_dir, "terraform.tfvars")
     try:
         with open(config_file, "w") as fd:
@@ -70,6 +70,7 @@ def create_tf_conf(tf_dir, region, management_cidr_block, vpc_cidr_block, subnet
                     region = "{region}"
                     management_cidr_block = "{management_cidr_block}"
                     vpc_cidr_block = "{vpc_cidr_block}"
+                    restrict_all_traffic = "{str(restrict_all_traffic).lower()}"
                     """
                 )
             )
