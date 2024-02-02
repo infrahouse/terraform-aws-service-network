@@ -17,6 +17,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             "expected_subnet_all_count",
             "expected_subnet_public_count",
             "expected_subnet_private_count",
+            "restrict_all_traffic"
         ]
     ),
     [
@@ -30,6 +31,19 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             0,  # expected_subnet_all_count
             0,  # expected_subnet_public_count
             0,  # expected_subnet_private_count
+            False,  # restrict_all_traffic
+        ),
+        # One VPC with no subnets, restrict all traffic
+        (
+            "us-east-1",
+            "10.0.0.0/16",
+            "10.0.0.0/16",
+            "[]",
+            0,  # expected_nat_gateways_count
+            0,  # expected_subnet_all_count
+            0,  # expected_subnet_public_count
+            0,  # expected_subnet_private_count
+            True,  # restrict_all_traffic
         ),
         # One VPC with one subnet
         (
@@ -50,6 +64,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             1,  # expected_subnet_all_count
             1,  # expected_subnet_public_count
             0,  # expected_subnet_private_count
+            False,  # restrict_all_traffic
         ),
         # One VPC with three subnets
         (
@@ -84,6 +99,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             3,  # expected_subnet_all_count
             1,  # expected_subnet_public_count
             2,  # expected_subnet_private_count
+            False,  # restrict_all_traffic
         ),
     ],
 )
@@ -97,6 +113,7 @@ def test_service_network(
     expected_subnet_all_count,
     expected_subnet_public_count,
     expected_subnet_private_count,
+    restrict_all_traffic
 ):
     ec2_client = ec2_client_map[region]
 
@@ -107,6 +124,7 @@ def test_service_network(
         management_cidr_block=management_cidr_block,
         vpc_cidr_block=vpc_cidr_block,
         subnets=subnets,
+        restrict_all_traffic=restrict_all_traffic
     ):
         with terraform_apply(
             tf_dir,

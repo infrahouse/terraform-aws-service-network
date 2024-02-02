@@ -22,6 +22,12 @@ variable "management_cidr_block" {
   description = "Management VPC cidr block"
 }
 
+variable "restrict_all_traffic" {
+  description = "Whether the default security group should deny all traffic"
+  type        = bool
+  default     = false
+}
+
 variable "service_name" {
   description = "Descriptive name of a service that will use this VPC"
 }

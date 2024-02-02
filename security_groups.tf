@@ -2,25 +2,6 @@
 # all traffic
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.vpc.id
-
-  ingress {
-    protocol  = -1
-    from_port = 0
-    to_port   = 0
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
-  }
-
-  egress {
-    protocol  = -1
-    from_port = 0
-    to_port   = 0
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
-  }
-
   tags = merge(
     var.tags,
     {
@@ -30,4 +11,26 @@ resource "aws_default_security_group" "default" {
     }
   )
 
+}
+
+resource "aws_vpc_security_group_ingress_rule" "default" {
+  count             = var.restrict_all_traffic == true ? 0 : 1
+  description       = "Allow all traffic"
+  security_group_id = aws_default_security_group.default.id
+  ip_protocol       = "-1"
+  cidr_ipv4         = "0.0.0.0/0"
+  tags = {
+    Name = "incoming traffic"
+  }
+}
+
+resource "aws_vpc_security_group_egress_rule" "default" {
+  count             = var.restrict_all_traffic == true ? 0 : 1
+  description       = "Allow all traffic"
+  security_group_id = aws_default_security_group.default.id
+  ip_protocol       = "-1"
+  cidr_ipv4         = "0.0.0.0/0"
+  tags = {
+    Name = "outgoing traffic"
+  }
 }
