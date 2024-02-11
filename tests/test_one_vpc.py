@@ -17,7 +17,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             "expected_subnet_all_count",
             "expected_subnet_public_count",
             "expected_subnet_private_count",
-            "restrict_all_traffic"
+            "restrict_all_traffic",
         ]
     ),
     [
@@ -113,7 +113,7 @@ def test_service_network(
     expected_subnet_all_count,
     expected_subnet_public_count,
     expected_subnet_private_count,
-    restrict_all_traffic
+    restrict_all_traffic,
 ):
     ec2_client = ec2_client_map[region]
 
@@ -124,7 +124,7 @@ def test_service_network(
         management_cidr_block=management_cidr_block,
         vpc_cidr_block=vpc_cidr_block,
         subnets=subnets,
-        restrict_all_traffic=restrict_all_traffic
+        restrict_all_traffic=restrict_all_traffic,
     ):
         with terraform_apply(
             tf_dir,

@@ -9,6 +9,11 @@ variable "enable_dns_hostnames" {
   type        = bool
   default     = false
 }
+variable "enable_resource_name_dns_a_record_on_launch" {
+  description = "Indicates whether to respond to DNS queries for instance hostnames with DNS A records."
+  type        = bool
+  default     = false
+}
 
 variable "environment" {
   description = "Name of environment"
