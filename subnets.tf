@@ -8,6 +8,7 @@ resource "aws_subnet" "all" {
 
   tags = merge(
     var.tags,
+    each.value.tags,
     {
       "Name"        = "${var.service_name}: ${each.value.map_public_ip_on_launch ? "public" : "private"} ${each.key}"
       "environment" = var.environment
