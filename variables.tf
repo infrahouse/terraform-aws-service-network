@@ -45,6 +45,7 @@ variable "subnets" {
     map_public_ip_on_launch = bool
     create_nat              = bool
     forward_to              = string
+    tags                    = optional(map(string), {})
   }))
   default = []
 }

@@ -10,7 +10,6 @@ resource "aws_default_security_group" "default" {
       "service"     = var.service_name
     }
   )
-
 }
 
 resource "aws_vpc_security_group_ingress_rule" "default" {
