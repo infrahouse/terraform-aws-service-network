@@ -6,4 +6,5 @@ module "test_network" {
   management_cidr_block = var.management_cidr_block
   subnets               = var.subnets
   restrict_all_traffic  = var.restrict_all_traffic
+  enable_vpc_flow_logs  = var.enable_vpc_flow_logs
 }

@@ -3,7 +3,7 @@ from pprint import pformat
 import pytest
 from infrahouse_toolkit.terraform import terraform_apply
 
-from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
+from tests.conftest import create_tf_conf, TRACE_TERRAFORM
 
 
 @pytest.mark.parametrize(
@@ -18,6 +18,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             "expected_subnet_public_count",
             "expected_subnet_private_count",
             "restrict_all_traffic",
+            "enable_vpc_flow_logs",
         ]
     ),
     [
@@ -32,6 +33,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             0,  # expected_subnet_public_count
             0,  # expected_subnet_private_count
             False,  # restrict_all_traffic
+            None,  # enable_vpc_flow_logs
         ),
         # One VPC with no subnets, restrict all traffic
         (
@@ -44,6 +46,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             0,  # expected_subnet_public_count
             0,  # expected_subnet_private_count
             True,  # restrict_all_traffic
+            None,  # enable_vpc_flow_logs
         ),
         # One VPC with one subnet
         (
@@ -65,6 +68,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             1,  # expected_subnet_public_count
             0,  # expected_subnet_private_count
             False,  # restrict_all_traffic
+            None,  # enable_vpc_flow_logs
         ),
         # One VPC with three subnets
         (
@@ -100,6 +104,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM, DESTROY_AFTER
             1,  # expected_subnet_public_count
             2,  # expected_subnet_private_count
             False,  # restrict_all_traffic
+            True,  # enable_vpc_flow_logs
         ),
     ],
 )
@@ -114,8 +119,10 @@ def test_service_network(
     expected_subnet_public_count,
     expected_subnet_private_count,
     restrict_all_traffic,
+    enable_vpc_flow_logs,
+    keep_after,
 ):
-    ec2_client = ec2_client_map[region]
+    ec2 = ec2_client_map[region]
 
     tf_dir = "test_data/service_network"
     with create_tf_conf(
@@ -125,15 +132,16 @@ def test_service_network(
         vpc_cidr_block=vpc_cidr_block,
         subnets=subnets,
         restrict_all_traffic=restrict_all_traffic,
+        enable_vpc_flow_logs=enable_vpc_flow_logs,
     ):
         with terraform_apply(
             tf_dir,
             json_output=True,
             var_file="terraform.tfvars",
             enable_trace=TRACE_TERRAFORM,
-            destroy_after=DESTROY_AFTER,
+            destroy_after=not keep_after,
         ) as tf_out:
-            response = ec2_client.describe_vpcs(
+            response = ec2.describe_vpcs(
                 Filters=[
                     {"Name": "state", "Values": ["available"]},
                     {"Name": "cidr", "Values": [vpc_cidr_block]},
@@ -148,7 +156,7 @@ def test_service_network(
             ), "Unexpected terraform output: %s" % pformat(tf_out, indent=4)
 
             # Check Internet gateway is created
-            response = ec2_client.describe_internet_gateways(
+            response = ec2.describe_internet_gateways(
                 Filters=[
                     {"Name": "attachment.vpc-id", "Values": [vpc_id]},
                     {"Name": "attachment.state", "Values": ["available"]},
@@ -157,13 +165,13 @@ def test_service_network(
             assert len(response["InternetGateways"]) == 1
 
             # Check NAT gateway
-            response = ec2_client.describe_nat_gateways(
+            response = ec2.describe_nat_gateways(
                 Filters=[{"Name": "state", "Values": ["available"]}],
             )
             assert len(response["NatGateways"]) == expected_nat_gateways_count
 
             # Check Elastic IP. Should be as many as NAT gateways
-            response = ec2_client.describe_addresses(
+            response = ec2.describe_addresses(
                 Filters=[{"Name": "domain", "Values": ["vpc"]}],
             )
             assert len(response["Addresses"]) == expected_nat_gateways_count
