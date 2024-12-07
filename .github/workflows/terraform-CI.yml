@@ -17,7 +17,8 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    # Use the Bash shell regardless whether the GitHub Actions runner
+    # is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
@@ -38,7 +39,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-            terraform_wrapper: false
+          terraform_wrapper: false
 
       # Prepare Python environment
       - name: Setup Python Environment

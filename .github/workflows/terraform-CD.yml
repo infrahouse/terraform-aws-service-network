@@ -21,7 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     timeout-minutes: 60
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    # Use the Bash shell regardless whether the GitHub Actions runner
+    # is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash

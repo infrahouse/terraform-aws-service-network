@@ -32,3 +32,7 @@ variable "vpc_cidr_block" {
 variable "restrict_all_traffic" {
   type = bool
 }
+
+variable "enable_vpc_flow_logs" {
+  default = null
+}

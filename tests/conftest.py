@@ -13,7 +13,20 @@ TEST_ACCOUNT = "303467602807"
 TEST_ROLE_ARN = "arn:aws:iam::303467602807:role/service-network-tester"
 DEFAULT_PROGRESS_INTERVAL = 10
 TRACE_TERRAFORM = False
-DESTROY_AFTER = True
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--keep-after",
+        action="store_true",
+        default=False,
+        help="If specified, don't destroy resources",
+    )
+
+
+@pytest.fixture(scope="session")
+def keep_after(request):
+    return request.config.getoption("--keep-after")
 
 
 LOG = logging.getLogger(__name__)
@@ -67,6 +80,7 @@ def create_tf_conf(
     vpc_cidr_block,
     subnets,
     restrict_all_traffic: bool,
+    enable_vpc_flow_logs: bool = None,
 ):
     config_file = osp.join(tf_dir, "terraform.tfvars")
     try:
@@ -77,11 +91,13 @@ def create_tf_conf(
                     region = "{region}"
                     management_cidr_block = "{management_cidr_block}"
                     vpc_cidr_block = "{vpc_cidr_block}"
-                    restrict_all_traffic = "{str(restrict_all_traffic).lower()}"
+                    restrict_all_traffic = {str(restrict_all_traffic).lower()}
                     """
                 )
             )
             fd.write(f"subnets = {subnets}")
+            if enable_vpc_flow_logs is not None:
+                fd.write(f"enable_vpc_flow_logs = {str(enable_vpc_flow_logs).lower()}")
         LOG.info(
             "Terraform configuration: %s",
             open(osp.join(tf_dir, "terraform.tfvars")).read(),

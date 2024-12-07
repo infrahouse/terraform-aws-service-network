@@ -50,6 +50,11 @@ variable "subnets" {
   default = []
 }
 
+variable "enable_vpc_flow_logs" {
+  description = "Whether to enable VPC Flow Logs. Default, false."
+  default     = false
+}
+
 variable "vpc_cidr_block" {
   description = "Block of IP addresses used for this VPC"
 }
