@@ -52,6 +52,7 @@ variable "subnets" {
 
 variable "enable_vpc_flow_logs" {
   description = "Whether to enable VPC Flow Logs. Default, false."
+  type        = bool
   default     = false
 }
 

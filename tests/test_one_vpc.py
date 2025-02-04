@@ -33,7 +33,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM
             0,  # expected_subnet_public_count
             0,  # expected_subnet_private_count
             False,  # restrict_all_traffic
-            None,  # enable_vpc_flow_logs
+            False,  # enable_vpc_flow_logs
         ),
         # One VPC with no subnets, restrict all traffic
         (
@@ -46,7 +46,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM
             0,  # expected_subnet_public_count
             0,  # expected_subnet_private_count
             True,  # restrict_all_traffic
-            None,  # enable_vpc_flow_logs
+            False,  # enable_vpc_flow_logs
         ),
         # One VPC with one subnet
         (
@@ -68,7 +68,7 @@ from tests.conftest import create_tf_conf, TRACE_TERRAFORM
             1,  # expected_subnet_public_count
             0,  # expected_subnet_private_count
             False,  # restrict_all_traffic
-            None,  # enable_vpc_flow_logs
+            False,  # enable_vpc_flow_logs
         ),
         # One VPC with three subnets
         (

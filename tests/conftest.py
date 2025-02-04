@@ -80,7 +80,7 @@ def create_tf_conf(
     vpc_cidr_block,
     subnets,
     restrict_all_traffic: bool,
-    enable_vpc_flow_logs: bool = None,
+    enable_vpc_flow_logs: bool = False,
 ):
     config_file = osp.join(tf_dir, "terraform.tfvars")
     try:
