@@ -63,3 +63,8 @@ variable "tags" {
   description = "Tags to apply to each resource"
   default     = {}
 }
+
+variable "vpc_flow_retention_days" {
+  description = "Retention period for store logs"
+  default     = 7
+}

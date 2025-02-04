@@ -13,7 +13,7 @@ resource "aws_default_security_group" "default" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "default" {
-  count             = var.restrict_all_traffic == true ? 0 : 1
+  count             = var.restrict_all_traffic ? 0 : 1
   description       = "Allow all traffic"
   security_group_id = aws_default_security_group.default.id
   ip_protocol       = "-1"
@@ -24,7 +24,7 @@ resource "aws_vpc_security_group_ingress_rule" "default" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "default" {
-  count             = var.restrict_all_traffic == true ? 0 : 1
+  count             = var.restrict_all_traffic ? 0 : 1
   description       = "Allow all traffic"
   security_group_id = aws_default_security_group.default.id
   ip_protocol       = "-1"
