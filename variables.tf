@@ -52,6 +52,7 @@ variable "subnets" {
 
 variable "enable_vpc_flow_logs" {
   description = "Whether to enable VPC Flow Logs. Default, false."
+  type        = bool
   default     = false
 }
 
@@ -62,4 +63,9 @@ variable "vpc_cidr_block" {
 variable "tags" {
   description = "Tags to apply to each resource"
   default     = {}
+}
+
+variable "vpc_flow_retention_days" {
+  description = "Retention period for VPC flow logs in S3 bucket."
+  default     = 7
 }

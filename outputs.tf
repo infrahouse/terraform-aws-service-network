@@ -25,13 +25,13 @@ output "subnet_all_ids" {
 }
 output "subnet_private_ids" {
   value = [
-    for subnet in aws_subnet.all : subnet.id if subnet.map_public_ip_on_launch == false
+    for subnet in aws_subnet.all : subnet.id if !subnet.map_public_ip_on_launch
   ]
 }
 
 output "subnet_public_ids" {
   value = [
-    for subnet in aws_subnet.all : subnet.id if subnet.map_public_ip_on_launch == true
+    for subnet in aws_subnet.all : subnet.id if subnet.map_public_ip_on_launch
   ]
 }
 
