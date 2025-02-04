@@ -80,6 +80,7 @@ def create_tf_conf(
     vpc_cidr_block,
     subnets,
     restrict_all_traffic: bool,
+    enable_vpc_flow_logs: bool = False,
 ):
     config_file = osp.join(tf_dir, "terraform.tfvars")
     try:
@@ -91,6 +92,7 @@ def create_tf_conf(
                     management_cidr_block = "{management_cidr_block}"
                     vpc_cidr_block = "{vpc_cidr_block}"
                     restrict_all_traffic = {str(restrict_all_traffic).lower()}
+                    enable_vpc_flow_logs = {str(enable_vpc_flow_logs).lower()}
                     """
                 )
             )
