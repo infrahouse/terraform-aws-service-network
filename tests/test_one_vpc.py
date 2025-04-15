@@ -3,7 +3,7 @@ from pprint import pformat
 import pytest
 from infrahouse_toolkit.terraform import terraform_apply
 
-from tests.conftest import create_tf_conf, TRACE_TERRAFORM
+from tests.conftest import create_tf_conf
 
 
 @pytest.mark.parametrize(
@@ -121,6 +121,7 @@ def test_service_network(
     restrict_all_traffic,
     enable_vpc_flow_logs,
     keep_after,
+    test_role_arn,
 ):
     ec2 = ec2_client_map[region]
 
@@ -133,12 +134,12 @@ def test_service_network(
         subnets=subnets,
         restrict_all_traffic=restrict_all_traffic,
         enable_vpc_flow_logs=enable_vpc_flow_logs,
+        test_role_arn=test_role_arn
     ):
         with terraform_apply(
             tf_dir,
             json_output=True,
             var_file="terraform.tfvars",
-            enable_trace=TRACE_TERRAFORM,
             destroy_after=not keep_after,
         ) as tf_out:
             response = ec2.describe_vpcs(
