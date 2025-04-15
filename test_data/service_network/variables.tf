@@ -3,6 +3,9 @@ variable "environment" {
 }
 
 variable "region" {}
+variable "role_arn" {
+  default = null
+}
 
 variable "service_name" {
   description = "Descriptive name of a service that will use this VPC"
