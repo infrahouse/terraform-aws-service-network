@@ -2,8 +2,6 @@ import logging
 from contextlib import contextmanager
 from os import path as osp
 
-import boto3
-import pytest
 from textwrap import dedent
 
 from infrahouse_toolkit.logging import setup_logging
@@ -35,7 +33,7 @@ def create_tf_conf(
     subnets,
     restrict_all_traffic: bool,
     enable_vpc_flow_logs: bool = False,
-    test_role_arn: str = None
+    test_role_arn: str = None,
 ):
     config_file = osp.join(tf_dir, "terraform.tfvars")
     try:
