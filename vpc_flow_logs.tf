@@ -48,7 +48,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "vpc_flow_logs" {
   rule {
     id     = "delete-old"
     status = "Enabled"
-    filter {}
+    filter {
+      object_size_greater_than = 0
+    }
     expiration {
       days = var.vpc_flow_retention_days
     }

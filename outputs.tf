@@ -40,3 +40,8 @@ output "route_table_all_ids" {
     for subnet in aws_subnet.all : aws_route_table.all[subnet.cidr_block].id
   ]
 }
+
+output "vpc_flow_bucket_name" {
+  description = "S3 bucket name with VPC Flow logs if enabled"
+  value       = var.enable_vpc_flow_logs ? aws_s3_bucket.vpc_flow_logs[0].bucket : null
+}

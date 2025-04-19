@@ -103,7 +103,7 @@ from tests.conftest import create_tf_conf
             3,  # expected_subnet_all_count
             1,  # expected_subnet_public_count
             2,  # expected_subnet_private_count
-            False,  # restrict_all_traffic
+            True,  # restrict_all_traffic
             True,  # enable_vpc_flow_logs
         ),
     ],
@@ -134,7 +134,7 @@ def test_service_network(
         subnets=subnets,
         restrict_all_traffic=restrict_all_traffic,
         enable_vpc_flow_logs=enable_vpc_flow_logs,
-        test_role_arn=test_role_arn
+        test_role_arn=test_role_arn,
     ):
         with terraform_apply(
             tf_dir,
