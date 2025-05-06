@@ -123,9 +123,12 @@ No modules.
 | [aws_s3_bucket_versioning.enabled](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
 | [aws_subnet.all](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
+| [aws_vpc_endpoint.s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
+| [aws_vpc_endpoint_route_table_association.example](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint_route_table_association) | resource |
 | [aws_vpc_peering_connection.link_to_management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_peering_connection) | resource |
 | [aws_vpc_security_group_egress_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_route_tables.mgmt_route_tables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route_tables) | data source |
 | [aws_vpc.management_vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
@@ -141,9 +144,10 @@ No modules.
 | <a name="input_management_cidr_block"></a> [management\_cidr\_block](#input\_management\_cidr\_block) | Management VPC cidr block | `any` | n/a | yes |
 | <a name="input_restrict_all_traffic"></a> [restrict\_all\_traffic](#input\_restrict\_all\_traffic) | Whether the default security group should deny all traffic | `bool` | `false` | no |
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | Descriptive name of a service that will use this VPC | `any` | n/a | yes |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | List of subnets in the VPC | <pre>list(object({<br>    cidr                    = string<br>    availability-zone       = string<br>    map_public_ip_on_launch = bool<br>    create_nat              = bool<br>    forward_to              = string<br>    tags                    = optional(map(string), {})<br>  }))</pre> | `[]` | no |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | List of subnets in the VPC | <pre>list(object({<br/>    cidr                    = string<br/>    availability-zone       = string<br/>    map_public_ip_on_launch = bool<br/>    create_nat              = bool<br/>    forward_to              = string<br/>    tags                    = optional(map(string), {})<br/>  }))</pre> | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to each resource | `map` | `{}` | no |
 | <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | Block of IP addresses used for this VPC | `any` | n/a | yes |
+| <a name="input_vpc_flow_retention_days"></a> [vpc\_flow\_retention\_days](#input\_vpc\_flow\_retention\_days) | Retention period for VPC flow logs in S3 bucket. | `number` | `7` | no |
 
 ## Outputs
 
@@ -152,9 +156,11 @@ No modules.
 | <a name="output_internet_gateway_id"></a> [internet\_gateway\_id](#output\_internet\_gateway\_id) | n/a |
 | <a name="output_is_management_network"></a> [is\_management\_network](#output\_is\_management\_network) | n/a |
 | <a name="output_management_cidr_block"></a> [management\_cidr\_block](#output\_management\_cidr\_block) | n/a |
+| <a name="output_nat_ips"></a> [nat\_ips](#output\_nat\_ips) | NAT IP addresses. |
 | <a name="output_route_table_all_ids"></a> [route\_table\_all\_ids](#output\_route\_table\_all\_ids) | n/a |
 | <a name="output_subnet_all_ids"></a> [subnet\_all\_ids](#output\_subnet\_all\_ids) | n/a |
 | <a name="output_subnet_private_ids"></a> [subnet\_private\_ids](#output\_subnet\_private\_ids) | n/a |
 | <a name="output_subnet_public_ids"></a> [subnet\_public\_ids](#output\_subnet\_public\_ids) | n/a |
 | <a name="output_vpc_cidr_block"></a> [vpc\_cidr\_block](#output\_vpc\_cidr\_block) | n/a |
+| <a name="output_vpc_flow_bucket_name"></a> [vpc\_flow\_bucket\_name](#output\_vpc\_flow\_bucket\_name) | S3 bucket name with VPC Flow logs if enabled |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | n/a |
