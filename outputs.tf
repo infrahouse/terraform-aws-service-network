@@ -45,3 +45,10 @@ output "vpc_flow_bucket_name" {
   description = "S3 bucket name with VPC Flow logs if enabled"
   value       = var.enable_vpc_flow_logs ? aws_s3_bucket.vpc_flow_logs[0].bucket : null
 }
+
+output "nat_ips" {
+  description = "NAT IP addresses."
+  value = [
+    for ip in aws_eip.nat_eip : ip.public_ip
+  ]
+}
