@@ -44,9 +44,9 @@ variable "subnets" {
       {
         cidr                    = string
         availability-zone       = string
-        map_public_ip_on_launch = bool
-        create_nat              = bool
-        forward_to              = string
+        map_public_ip_on_launch = optional(bool, false)
+        create_nat              = optional(bool, false)
+        forward_to              = optional(string, null)
         tags                    = optional(map(string), {})
       }
     )

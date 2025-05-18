@@ -18,13 +18,18 @@ variable "management_cidr_block" {
 
 variable "subnets" {
   description = "List of subnets in the VPC"
-  type = list(object({
-    cidr                    = string
-    availability-zone       = string
-    map_public_ip_on_launch = bool
-    create_nat              = bool
-    forward_to              = string
-  }))
+  type = list(
+    object(
+      {
+        cidr                    = string
+        availability-zone       = string
+        map_public_ip_on_launch = optional(bool, false)
+        create_nat              = optional(bool, false)
+        forward_to              = optional(string, false)
+        tags                    = optional(map(string), {})
+      }
+    )
+  )
   default = []
 }
 

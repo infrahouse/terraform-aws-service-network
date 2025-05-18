@@ -21,3 +21,10 @@ output "vpc_id" {
 output "route_table_all" {
   value = module.test_network.route_table_all_ids
 }
+
+output "client_instances" {
+  description = "Map with subnet id as key and client instance id as value"
+  value = {
+    for subnet_id in module.test_network.subnet_all_ids : subnet_id => aws_instance.client_instance[subnet_id].id
+  }
+}
