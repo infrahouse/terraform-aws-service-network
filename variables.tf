@@ -7,7 +7,7 @@ variable "enable_dns_support" {
 variable "enable_dns_hostnames" {
   description = "A boolean flag to enable/disable DNS hostnames in the VPC. Defaults false."
   type        = bool
-  default     = false
+  default     = true
 }
 variable "enable_resource_name_dns_a_record_on_launch" {
   description = "Indicates whether to respond to DNS queries for instance hostnames with DNS A records."
@@ -30,7 +30,7 @@ variable "management_cidr_block" {
 variable "restrict_all_traffic" {
   description = "Whether the default security group should deny all traffic"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "service_name" {
@@ -39,21 +39,25 @@ variable "service_name" {
 
 variable "subnets" {
   description = "List of subnets in the VPC"
-  type = list(object({
-    cidr                    = string
-    availability-zone       = string
-    map_public_ip_on_launch = bool
-    create_nat              = bool
-    forward_to              = string
-    tags                    = optional(map(string), {})
-  }))
+  type = list(
+    object(
+      {
+        cidr                    = string
+        availability-zone       = string
+        map_public_ip_on_launch = bool
+        create_nat              = bool
+        forward_to              = string
+        tags                    = optional(map(string), {})
+      }
+    )
+  )
   default = []
 }
 
 variable "enable_vpc_flow_logs" {
   description = "Whether to enable VPC Flow Logs. Default, false."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "vpc_cidr_block" {

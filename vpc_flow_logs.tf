@@ -4,14 +4,14 @@ resource "aws_flow_log" "vpc" {
   log_destination_type = "s3"
   traffic_type         = "ALL"
   vpc_id               = aws_vpc.vpc.id
-  tags                 = var.tags
+  tags                 = local.default_module_tags
 }
 
 resource "aws_s3_bucket" "vpc_flow_logs" {
   count         = var.enable_vpc_flow_logs ? 1 : 0
   bucket_prefix = "vpc-flow-logs-${replace(var.service_name, " ", "-")}-"
   force_destroy = true
-  tags          = var.tags
+  tags          = local.default_module_tags
 }
 
 resource "aws_s3_bucket_public_access_block" "public_access" {

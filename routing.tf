@@ -3,13 +3,11 @@
 resource "aws_default_route_table" "default" {
   default_route_table_id = aws_vpc.vpc.default_route_table_id
   tags = merge(
-    var.tags,
     {
-      "Name"        = "Main table for ${aws_vpc.vpc.cidr_block}"
-      "residency"   = aws_vpc.vpc.cidr_block
-      "environment" = var.environment
-      "service"     = var.service_name
-    }
+      "Name"      = "Main table for ${aws_vpc.vpc.cidr_block}"
+      "residency" = aws_vpc.vpc.cidr_block
+    },
+    local.default_module_tags
   )
 }
 
@@ -25,13 +23,11 @@ resource "aws_route_table" "all" {
   for_each = toset([for k in var.subnets : k.cidr])
   vpc_id   = aws_vpc.vpc.id
   tags = merge(
-    var.tags,
     {
-      "Name"        = "Table for ${each.key}"
-      "residency"   = each.key
-      "environment" = var.environment
-      "service"     = var.service_name
-    }
+      "Name"      = "Table for ${each.key}"
+      "residency" = each.key
+    },
+    local.default_module_tags
   )
 }
 

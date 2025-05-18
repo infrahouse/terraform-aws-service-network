@@ -7,13 +7,11 @@ resource "aws_subnet" "all" {
   enable_resource_name_dns_a_record_on_launch = var.enable_resource_name_dns_a_record_on_launch
 
   tags = merge(
-    var.tags,
     each.value.tags,
     {
-      "Name"        = "${var.service_name}: ${each.value.map_public_ip_on_launch ? "public" : "private"} ${each.key}"
-      "environment" = var.environment
-      "service"     = var.service_name
-      "management"  = local.is_management_network
-    }
+      "Name"       = "${var.service_name}: ${each.value.map_public_ip_on_launch ? "public" : "private"} ${each.key}"
+      "management" = local.is_management_network
+    },
+    local.default_module_tags
   )
 }

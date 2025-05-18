@@ -5,13 +5,12 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = var.enable_dns_hostnames
 
   tags = merge(
-    var.tags,
     {
-      "Name"        = "VPC for ${var.service_name} (${var.environment}) ${var.vpc_cidr_block}"
-      "environment" = var.environment
-      "service"     = var.service_name
-      "management"  = local.is_management_network
-    }
+      "Name"         = "VPC for ${var.service_name} (${var.environment}) ${var.vpc_cidr_block}"
+      "management"   = local.is_management_network
+      module_version = local.module_version
+    },
+    local.default_module_tags
   )
   lifecycle {
     create_before_destroy = true
