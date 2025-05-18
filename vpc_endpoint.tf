@@ -3,12 +3,10 @@ resource "aws_vpc_endpoint" "s3" {
   service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
   vpc_endpoint_type = "Gateway"
   tags = merge(
-    var.tags,
     {
-      "Name"        = "S3 Endpoint in ${var.service_name} VPC"
-      "environment" = var.environment
-      "service"     = var.service_name
-    }
+      "Name" = "S3 Endpoint in ${var.service_name} VPC"
+    },
+    local.default_module_tags
   )
 }
 

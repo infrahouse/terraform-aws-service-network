@@ -5,12 +5,10 @@ resource "aws_internet_gateway" "ig" {
   vpc_id = aws_vpc.vpc.id
 
   tags = merge(
-    var.tags,
     {
-      "Name"        = "Internet gateway"
-      "environment" = var.environment
-      "service"     = var.service_name
-    }
+      "Name" = "Internet gateway"
+    },
+    local.default_module_tags
   )
 }
 
@@ -22,13 +20,12 @@ resource "aws_nat_gateway" "nat_gw" {
   subnet_id     = aws_subnet.all[each.key].id
 
   tags = merge(
-    var.tags,
     {
-      "Name"        = "NAT gateway"
-      "residency"   = each.key
-      "environment" = var.environment
-      "service"     = var.service_name
-    }
+      "Name"      = "NAT gateway"
+      "residency" = each.key
+    },
+    local.default_module_tags
+
   )
 }
 
@@ -37,12 +34,10 @@ resource "aws_eip" "nat_eip" {
   for_each = toset([for s in local.subnets_with_nat : s.cidr])
   domain   = "vpc"
   tags = merge(
-    var.tags,
     {
-      "Name"        = "Elastic IP for NAT gateway"
-      "residency"   = each.key
-      "environment" = var.environment
-      "service"     = var.service_name
-    }
+      "Name"      = "Elastic IP for NAT gateway"
+      "residency" = each.key
+    },
+    local.default_module_tags
   )
 }

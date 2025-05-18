@@ -21,7 +21,9 @@ The management network.
 
 ```hcl
 module "management" {
-  source                = "/path/to/module"
+  source  = "infrahouse/service-network/aws"
+  version = "3.0.0"
+
   environment           = "dev"
   service_name          = "management"
   vpc_cidr_block        = "10.1.0.0/16"
@@ -56,7 +58,9 @@ Service network (for website or other service).
 
 ```hcl
 module "website" {
-  source                = "/path/to/module"
+  source  = "infrahouse/service-network/aws"
+  version = "3.0.0"
+
   environment           = "dev"
   service_name          = "website"
   vpc_cidr_block        = "10.3.0.0/16"
@@ -123,9 +127,12 @@ No modules.
 | [aws_s3_bucket_versioning.enabled](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
 | [aws_subnet.all](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
+| [aws_vpc_endpoint.s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
+| [aws_vpc_endpoint_route_table_association.example](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint_route_table_association) | resource |
 | [aws_vpc_peering_connection.link_to_management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_peering_connection) | resource |
 | [aws_vpc_security_group_egress_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_route_tables.mgmt_route_tables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route_tables) | data source |
 | [aws_vpc.management_vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
@@ -133,17 +140,18 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_enable_dns_hostnames"></a> [enable\_dns\_hostnames](#input\_enable\_dns\_hostnames) | A boolean flag to enable/disable DNS hostnames in the VPC. Defaults false. | `bool` | `false` | no |
+| <a name="input_enable_dns_hostnames"></a> [enable\_dns\_hostnames](#input\_enable\_dns\_hostnames) | A boolean flag to enable/disable DNS hostnames in the VPC. Defaults false. | `bool` | `true` | no |
 | <a name="input_enable_dns_support"></a> [enable\_dns\_support](#input\_enable\_dns\_support) | A boolean flag to enable/disable DNS support in the VPC. Defaults true. | `bool` | `true` | no |
 | <a name="input_enable_resource_name_dns_a_record_on_launch"></a> [enable\_resource\_name\_dns\_a\_record\_on\_launch](#input\_enable\_resource\_name\_dns\_a\_record\_on\_launch) | Indicates whether to respond to DNS queries for instance hostnames with DNS A records. | `bool` | `false` | no |
-| <a name="input_enable_vpc_flow_logs"></a> [enable\_vpc\_flow\_logs](#input\_enable\_vpc\_flow\_logs) | Whether to enable VPC Flow Logs. Default, false. | `bool` | `false` | no |
+| <a name="input_enable_vpc_flow_logs"></a> [enable\_vpc\_flow\_logs](#input\_enable\_vpc\_flow\_logs) | Whether to enable VPC Flow Logs. Default, false. | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Name of environment | `string` | `"development"` | no |
 | <a name="input_management_cidr_block"></a> [management\_cidr\_block](#input\_management\_cidr\_block) | Management VPC cidr block | `any` | n/a | yes |
-| <a name="input_restrict_all_traffic"></a> [restrict\_all\_traffic](#input\_restrict\_all\_traffic) | Whether the default security group should deny all traffic | `bool` | `false` | no |
+| <a name="input_restrict_all_traffic"></a> [restrict\_all\_traffic](#input\_restrict\_all\_traffic) | Whether the default security group should deny all traffic | `bool` | `true` | no |
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | Descriptive name of a service that will use this VPC | `any` | n/a | yes |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | List of subnets in the VPC | <pre>list(object({<br>    cidr                    = string<br>    availability-zone       = string<br>    map_public_ip_on_launch = bool<br>    create_nat              = bool<br>    forward_to              = string<br>    tags                    = optional(map(string), {})<br>  }))</pre> | `[]` | no |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | List of subnets in the VPC | <pre>list(<br/>    object(<br/>      {<br/>        cidr                    = string<br/>        availability-zone       = string<br/>        map_public_ip_on_launch = bool<br/>        create_nat              = bool<br/>        forward_to              = string<br/>        tags                    = optional(map(string), {})<br/>      }<br/>    )<br/>  )</pre> | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to each resource | `map` | `{}` | no |
 | <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | Block of IP addresses used for this VPC | `any` | n/a | yes |
+| <a name="input_vpc_flow_retention_days"></a> [vpc\_flow\_retention\_days](#input\_vpc\_flow\_retention\_days) | Retention period for VPC flow logs in S3 bucket. | `number` | `7` | no |
 
 ## Outputs
 
@@ -157,4 +165,5 @@ No modules.
 | <a name="output_subnet_private_ids"></a> [subnet\_private\_ids](#output\_subnet\_private\_ids) | n/a |
 | <a name="output_subnet_public_ids"></a> [subnet\_public\_ids](#output\_subnet\_public\_ids) | n/a |
 | <a name="output_vpc_cidr_block"></a> [vpc\_cidr\_block](#output\_vpc\_cidr\_block) | n/a |
+| <a name="output_vpc_flow_bucket_name"></a> [vpc\_flow\_bucket\_name](#output\_vpc\_flow\_bucket\_name) | S3 bucket name with VPC Flow logs if enabled |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | n/a |

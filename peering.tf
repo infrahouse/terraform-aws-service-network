@@ -13,5 +13,5 @@ resource "aws_vpc_peering_connection" "link_to_management" {
   peer_vpc_id = local.is_management_network ? aws_vpc.vpc.id : data.aws_vpc.management_vpc[0].id
   vpc_id      = aws_vpc.vpc.id
   auto_accept = true
-  tags        = var.tags
+  tags        = local.default_module_tags
 }
