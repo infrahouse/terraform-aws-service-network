@@ -24,7 +24,5 @@ output "route_table_all" {
 
 output "client_instances" {
   description = "Map with subnet id as key and client instance id as value"
-  value = {
-    for subnet_id in module.test_network.subnet_all_ids : subnet_id => aws_instance.client_instance[subnet_id].id
-  }
+  value       = aws_instance.client_instance[*].id
 }

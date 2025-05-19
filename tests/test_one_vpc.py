@@ -222,7 +222,7 @@ def test_service_network(
             assert (
                 len(tf_out["subnets_private"]["value"]) == expected_subnet_private_count
             )
-            for instance_id in tf_out["client_instances"]["value"].values():
+            for instance_id in tf_out["client_instances"]["value"]:
                 assert (
                     EC2Instance(
                         instance_id=instance_id,

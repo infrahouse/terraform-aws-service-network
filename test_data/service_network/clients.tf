@@ -81,8 +81,8 @@ resource "aws_security_group" "client" {
 
 
 resource "aws_instance" "client_instance" {
-  for_each  = toset(module.test_network.subnet_all_ids)
-  subnet_id = each.key
+  count     = length(module.test_network.subnet_all_ids)
+  subnet_id = module.test_network.subnet_all_ids[count.index]
   launch_template {
     id      = aws_launch_template.client.id
     version = "$Latest"
