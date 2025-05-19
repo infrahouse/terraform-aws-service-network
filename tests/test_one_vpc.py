@@ -1,6 +1,8 @@
 from pprint import pformat
 
 import pytest
+from infrahouse_core.aws import get_client
+from infrahouse_core.aws.ec2_instance import EC2Instance
 from infrahouse_toolkit.terraform import terraform_apply
 
 from tests.conftest import create_tf_conf
@@ -106,6 +108,42 @@ from tests.conftest import create_tf_conf
             True,  # restrict_all_traffic
             True,  # enable_vpc_flow_logs
         ),
+        # One VPC with four subnets and one NAT gateway
+        (
+            "us-east-1",
+            "10.1.0.0/16",
+            "10.1.0.0/16",
+            """[
+                    {
+                      cidr                    = "10.1.0.0/24"
+                      availability-zone       = "us-east-1a"
+                      map_public_ip_on_launch = true
+                      create_nat              = true
+                    },
+                    {
+                      cidr                    = "10.1.1.0/24"
+                      availability-zone       = "us-east-1a"
+                      forward_to              = "10.1.0.0/24"
+                    },
+                    {
+                      cidr                    = "10.1.2.0/24"
+                      availability-zone       = "us-east-1b"
+                      map_public_ip_on_launch = true
+                    },
+                    {
+                      cidr                    = "10.1.3.0/24"
+                      availability-zone       = "us-east-1b"
+                      forward_to              = "10.1.0.0/24"
+                    }
+                  ]
+                  """,
+            1,  # expected_nat_gateways_count
+            4,  # expected_subnet_all_count
+            2,  # expected_subnet_public_count
+            2,  # expected_subnet_private_count
+            True,  # restrict_all_traffic
+            False,  # enable_vpc_flow_logs
+        ),
     ],
 )
 def test_service_network(
@@ -184,3 +222,15 @@ def test_service_network(
             assert (
                 len(tf_out["subnets_private"]["value"]) == expected_subnet_private_count
             )
+            for instance_id in tf_out["client_instances"]["value"]:
+                assert (
+                    EC2Instance(
+                        instance_id=instance_id,
+                        region=region,
+                        ec2_client=ec2,
+                        ssm_client=get_client(
+                            "ssm", region=region, role_arn=test_role_arn
+                        ),
+                    ).execute_command("ping -c 1 google.com")[0]
+                    == 0
+                )

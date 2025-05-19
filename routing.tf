@@ -41,8 +41,7 @@ resource "aws_route" "subnet_public" {
 
 resource "aws_route" "subnet_private" {
   for_each = {
-    for s in local.subnets_private : s.cidr => s
-    if s.forward_to != null
+    for s in local.subnets_private : s.cidr => s if s.forward_to != null
   }
   route_table_id         = aws_route_table.all[each.key].id
   destination_cidr_block = "0.0.0.0/0"
