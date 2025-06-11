@@ -59,3 +59,101 @@ resource "aws_s3_bucket_lifecycle_configuration" "vpc_flow_logs" {
     }
   }
 }
+
+resource "aws_s3_bucket_policy" "vpc_flow_logs" {
+  count  = var.enable_vpc_flow_logs ? 1 : 0
+  bucket = aws_s3_bucket.vpc_flow_logs[count.index].id
+  policy = data.aws_iam_policy_document.vpc_flow_logs[count.index].json
+}
+
+data "aws_iam_policy_document" "vpc_flow_logs" {
+  count = var.enable_vpc_flow_logs ? 1 : 0
+  statement {
+    sid    = "AllowSSLRequestsOnly"
+    effect = "Deny"
+
+    actions = [
+      "s3:*",
+    ]
+
+    resources = [
+      aws_s3_bucket.vpc_flow_logs[count.index].arn,
+      "${aws_s3_bucket.vpc_flow_logs[count.index].arn}/*",
+    ]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values = [
+        "false"
+      ]
+    }
+  }
+  statement {
+    sid = "AWSLogDeliveryWrite1"
+    actions = [
+      "s3:PutObject"
+    ]
+    condition {
+      test = "ArnLike"
+      values = [
+        "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
+      ]
+      variable = "aws:SourceArn"
+    }
+    condition {
+      test = "StringEquals"
+      values = [
+        data.aws_caller_identity.current.account_id
+      ]
+      variable = "aws:SourceAccount"
+    }
+    condition {
+      test = "StringEquals"
+      values = [
+        "bucket-owner-full-control"
+      ]
+      variable = "s3:x-amz-acl"
+    }
+    principals {
+      identifiers = [
+        "delivery.logs.amazonaws.com"
+      ]
+      type = "Service"
+    }
+    resources = [
+      "${aws_s3_bucket.vpc_flow_logs[count.index].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+    ]
+  }
+  statement {
+    sid = "AWSLogDeliveryAclCheck1"
+    principals {
+      identifiers = ["delivery.logs.amazonaws.com"]
+      type        = "Service"
+    }
+    actions = [
+      "s3:GetBucketAcl"
+    ]
+    resources = [
+      aws_s3_bucket.vpc_flow_logs[count.index].arn
+    ]
+    condition {
+      test = "ArnLike"
+      values = [
+      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"]
+      variable = "aws:SourceArn"
+    }
+    condition {
+      test = "StringEquals"
+      values = [
+        data.aws_caller_identity.current.account_id
+      ]
+      variable = "aws:SourceAccount"
+    }
+  }
+}
