@@ -26,3 +26,8 @@ output "client_instances" {
   description = "Map with subnet id as key and client instance id as value"
   value       = aws_instance.client_instance[*].id
 }
+
+output "test_id" {
+  description = "Random string that helps to find resources created by this module"
+  value       = random_string.test-id.result
+}

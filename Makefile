@@ -42,8 +42,8 @@ test:  ## Run tests on the module
 
 .PHONY: bootstrap
 bootstrap: ## bootstrap the development environment
-	pip install -U "pip ~= 23.1"
-	pip install -U "setuptools ~= 68.0"
+	pip install -U "pip ~= 25.2"
+	pip install -U "setuptools ~= 80.0"
 	pip install -r requirements.txt
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
@@ -53,4 +53,3 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
-

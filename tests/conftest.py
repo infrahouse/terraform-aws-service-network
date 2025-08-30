@@ -4,16 +4,12 @@ from os import path as osp
 
 from textwrap import dedent
 
-from infrahouse_toolkit.logging import setup_logging
-
-# "303467602807" is our test account
-TEST_ACCOUNT = "303467602807"
-# TEST_ROLE_ARN = "arn:aws:iam::303467602807:role/service-network-tester"
-DEFAULT_PROGRESS_INTERVAL = 10
+from infrahouse_core.logging import setup_logging
 
 
-LOG = logging.getLogger(__name__)
+LOG = logging.getLogger()
 setup_logging(LOG, debug=True)
+TERRAFORM_ROOT_DIR = "test_data"
 
 
 def update_source(path, module_path):
@@ -31,6 +27,7 @@ def create_tf_conf(
     management_cidr_block,
     vpc_cidr_block,
     subnets,
+    zone_names: list,
     restrict_all_traffic: bool,
     enable_vpc_flow_logs: bool = False,
     test_role_arn: str = None,
@@ -49,7 +46,18 @@ def create_tf_conf(
                     """
                 )
             )
-            fd.write(f"subnets = {subnets}")
+            subnets_fmt = f"subnets = {subnets}"
+            fd.write(
+                subnets_fmt.format(
+                    zone_a=zone_names[0],
+                    zone_b=zone_names[1] if len(zone_names) > 1 else zone_names[0],
+                    zone_c=(
+                        zone_names[2]
+                        if len(zone_names) > 2
+                        else zone_names[1] if len(zone_names) > 1 else zone_names[0]
+                    ),
+                )
+            )
             if test_role_arn:
                 fd.write(
                     dedent(
