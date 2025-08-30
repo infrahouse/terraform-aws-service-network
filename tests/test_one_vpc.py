@@ -56,8 +56,7 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
         (
             "192.168.0.0/24",
             "192.168.0.0/24",
-            """
-            [
+            """[
                 {{
                     cidr                    = "192.168.0.0/24"
                     availability-zone       = "{zone_a}"
