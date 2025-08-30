@@ -11,6 +11,7 @@ locals {
     var.tags
   )
 
+
   is_management_network = var.management_cidr_block == var.vpc_cidr_block
   subnets_with_nat      = [for subnet in var.subnets : subnet if subnet.create_nat]
   subnets_without_nat   = [for subnet in var.subnets : subnet if !subnet.create_nat]

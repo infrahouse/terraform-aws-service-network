@@ -7,7 +7,7 @@ data "aws_iam_policy_document" "client-permissions" {
 
 module "instance-profile" {
   source       = "registry.infrahouse.com/infrahouse/instance-profile/aws"
-  version      = "1.8.1"
+  version      = "1.9.0"
   permissions  = data.aws_iam_policy_document.client-permissions.json
   profile_name = "service-network-client"
 }
