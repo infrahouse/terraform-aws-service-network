@@ -1,6 +1,6 @@
 locals {
   module_name    = "infrahouse/service-network/aws"
-  module_version = "3.2.0"
+  module_version = "3.2.1"
 
   default_module_tags = merge(
     {

@@ -22,7 +22,7 @@ The management network.
 ```hcl
 module "management" {
   source  = "infrahouse/service-network/aws"
-  version = "3.2.0"
+  version = "3.2.1"
 
   environment           = "dev"
   service_name          = "management"
@@ -59,7 +59,7 @@ Service network (for website or other service).
 ```hcl
 module "website" {
   source  = "infrahouse/service-network/aws"
-  version = "3.2.0"
+  version = "3.2.1"
 
   environment           = "dev"
   service_name          = "website"
