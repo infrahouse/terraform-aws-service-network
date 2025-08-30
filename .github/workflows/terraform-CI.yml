@@ -8,14 +8,19 @@ permissions:
   id-token: write  # This is required for requesting the JWT
   contents: read
 
+concurrency:
+  group: aws-control
+  cancel-in-progress: false
+
 jobs:
   terraform:
     name: 'Terraform Test'
-    runs-on: ubuntu-latest
+    runs-on: ["self-hosted", "Linux", "noble"]
     environment: production
     timeout-minutes: 120
     env:
       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      ROLE_ARN: "arn:aws:iam::303467602807:role/service-network-tester"
 
     # Use the Bash shell regardless whether the GitHub Actions runner
     # is ubuntu-latest, macos-latest, or windows-latest
@@ -31,7 +36,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: "arn:aws:iam::303467602807:role/service-network-tester"
+          role-to-assume: ${{ env.ROLE_ARN }}
           role-session-name: "terraform-aws-service-network-ci"
           aws-region: "us-west-1"
 
@@ -40,6 +45,11 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
 
       # Prepare Python environment
       - name: Setup Python Environment

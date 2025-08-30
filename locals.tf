@@ -1,6 +1,6 @@
 locals {
   module_name    = "infrahouse/service-network/aws"
-  module_version = "3.1.2"
+  module_version = "3.2.0"
 
   default_module_tags = merge(
     {
@@ -10,6 +10,7 @@ locals {
     },
     var.tags
   )
+
 
   is_management_network = var.management_cidr_block == var.vpc_cidr_block
   subnets_with_nat      = [for subnet in var.subnets : subnet if subnet.create_nat]

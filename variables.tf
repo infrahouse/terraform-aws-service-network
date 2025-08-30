@@ -5,7 +5,7 @@ variable "enable_dns_support" {
 }
 
 variable "enable_dns_hostnames" {
-  description = "A boolean flag to enable/disable DNS hostnames in the VPC. Defaults false."
+  description = "A boolean flag to enable/disable DNS hostnames in the VPC. Defaults true."
   type        = bool
   default     = true
 }
@@ -17,6 +17,7 @@ variable "enable_resource_name_dns_a_record_on_launch" {
 
 variable "environment" {
   description = "Name of environment"
+  type        = string
   default     = "development"
 }
 
@@ -25,6 +26,7 @@ variable "environment" {
 # needs to know block of IP addresses of the management VPC
 variable "management_cidr_block" {
   description = "Management VPC cidr block"
+  type        = string
 }
 
 variable "restrict_all_traffic" {
@@ -35,6 +37,7 @@ variable "restrict_all_traffic" {
 
 variable "service_name" {
   description = "Descriptive name of a service that will use this VPC"
+  type        = string
 }
 
 variable "subnets" {
@@ -55,21 +58,24 @@ variable "subnets" {
 }
 
 variable "enable_vpc_flow_logs" {
-  description = "Whether to enable VPC Flow Logs. Default, false."
+  description = "Whether to enable VPC Flow Logs. Default, true."
   type        = bool
   default     = true
 }
 
 variable "vpc_cidr_block" {
   description = "Block of IP addresses used for this VPC"
+  type        = string
 }
 
 variable "tags" {
   description = "Tags to apply to each resource"
+  type        = map(string)
   default     = {}
 }
 
 variable "vpc_flow_retention_days" {
   description = "Retention period for VPC flow logs in S3 bucket."
+  type        = number
   default     = 7
 }

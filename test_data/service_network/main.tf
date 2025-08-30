@@ -1,3 +1,8 @@
+resource "random_string" "test-id" {
+  length  = 6
+  special = false
+}
+
 module "test_network" {
   source                = "./../../"
   environment           = var.environment
@@ -7,4 +12,7 @@ module "test_network" {
   subnets               = var.subnets
   restrict_all_traffic  = var.restrict_all_traffic
   enable_vpc_flow_logs  = var.enable_vpc_flow_logs
+  tags = {
+    test_id : random_string.test-id.result
+  }
 }
