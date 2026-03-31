@@ -40,3 +40,6 @@ site/
 /.pytest_cache/
 .terraform.lock.hcl
 /test_data/service_network/terraform.tfvars
+
+.claude/reviews
+.claude/*.local.json
