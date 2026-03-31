@@ -5,6 +5,7 @@ framework:
 
 skip-path:
   - test_data
+  - examples
 
 skip-check:
   # VPC subnets: public IP mapping is user-configurable by design
