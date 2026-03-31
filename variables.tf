@@ -46,6 +46,11 @@ variable "default_security_group_cidr" {
   EOT
   type        = string
   default     = null
+
+  validation {
+    condition     = var.default_security_group_cidr == null ? true : can(cidrhost(var.default_security_group_cidr, 0))
+    error_message = "default_security_group_cidr must be a valid IPv4 CIDR block (e.g., 10.0.0.0/16)"
+  }
 }
 
 variable "service_name" {
@@ -69,6 +74,13 @@ variable "subnets" {
     )
   )
   default = []
+
+  validation {
+    condition = alltrue([
+      for s in var.subnets : coalesce(s.availability_zone, s.availability-zone, "") != ""
+    ])
+    error_message = "Each subnet must specify either availability_zone or availability-zone."
+  }
 }
 
 variable "enable_vpc_flow_logs" {
