@@ -21,8 +21,12 @@ help: ## Show this help message
 
 .PHONY: install-hooks
 install-hooks:  ## Install repo hooks
-	pre-commit install
-	pre-commit install --hook-type commit-msg
+	@echo "Checking and installing hooks"
+	@test -d .git/hooks || (echo "Looks like you are not in a Git repo" ; exit 1)
+	@test -L .git/hooks/pre-commit || ln -fs ../../hooks/pre-commit .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
+	@test -L .git/hooks/commit-msg || ln -fs ../../hooks/commit-msg .git/hooks/commit-msg
+	@chmod +x .git/hooks/commit-msg
 
 .PHONY: bootstrap
 bootstrap: install-hooks ## Bootstrap the development environment
