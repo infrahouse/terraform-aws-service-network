@@ -1,4 +1,5 @@
 import logging
+import os
 from contextlib import contextmanager
 from os import path as osp
 
@@ -31,6 +32,7 @@ def create_tf_conf(
     restrict_all_traffic: bool,
     enable_vpc_flow_logs: bool = False,
     test_role_arn: str = None,
+    keep_after: bool = False,
 ):
     config_file = osp.join(tf_dir, "terraform.tfvars")
     try:
@@ -73,5 +75,5 @@ def create_tf_conf(
         )
         yield
     finally:
-        pass
-        # os.remove(config_file)
+        if not keep_after:
+            os.remove(config_file)

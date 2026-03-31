@@ -1,91 +1,139 @@
-![Service Network](https://github.com/infrahouse/terraform-aws-service-network/assets/1763754/14018b73-7e3c-4687-8a96-89fb1c5895c0)
-A service network is a VPC that hosts one logical unit of services. It can
-be one service like MySQL, or it can comprise several services. For
-example, a website with HTTP service and MySQL service.
+# terraform-aws-service-network
 
-One service network is an island. Instances inside the island can
-communicate with each other and the outside world.
+[![Need Help?](https://img.shields.io/badge/Need%20Help%3F-Contact%20Us-0066CC)](https://infrahouse.com/contact)
+[![Docs](https://img.shields.io/badge/docs-github.io-blue)](https://infrahouse.github.io/terraform-aws-service-network/)
+[![Registry](https://img.shields.io/badge/Terraform-Registry-purple?logo=terraform)](https://registry.terraform.io/modules/infrahouse/service-network/aws/latest)
+[![Release](https://img.shields.io/github/release/infrahouse/terraform-aws-service-network.svg)](https://github.com/infrahouse/terraform-aws-service-network/releases/latest)
+[![AWS VPC](https://img.shields.io/badge/AWS-VPC-orange?logo=amazonwebservices)](https://aws.amazon.com/vpc/)
+[![Security](https://img.shields.io/github/actions/workflow/status/infrahouse/terraform-aws-service-network/checkov.yml?label=Security)](https://github.com/infrahouse/terraform-aws-service-network/actions/workflows/checkov.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-Two different service networks cannot communicate with each other. This is
-not a limitation but a security feature.
+![Architecture](docs/assets/architecture.svg)
 
-There is a special kind of service network - a management service network.
-It is a bridge between other service networks. The management service
-network can communicate with all other service networks. The management
-network is needed to host common services like Chef server, bastion
-hosts, etc.
+A Terraform module that creates isolated AWS VPC "service networks" with an optional
+management network peering topology. Each service network is an island where instances
+can communicate internally and with the outside world, but not with other service networks.
 
-# Usage
+## Features
 
-The management network.
+- Creates a VPC with configurable CIDR block and DNS settings
+- Dynamic subnet creation with per-subnet control over public IP mapping, NAT gateways, and traffic forwarding
+- Hub-and-spoke topology: service networks automatically peer with a management VPC
+- VPC Flow Logs to S3 with configurable retention (defaults to 365 days for ISO/SOC compliance)
+- S3 gateway endpoint for private S3 access
+- Restrictive default security group (configurable)
+- Internet Gateway and optional per-subnet NAT Gateways with Elastic IPs
+
+## Quick Start
+
+```hcl
+module "network" {
+  source  = "registry.infrahouse.com/infrahouse/service-network/aws"
+  version = "3.2.2"
+
+  environment           = "production"
+  service_name          = "my-service"
+  vpc_cidr_block        = "10.1.0.0/16"
+  management_cidr_block = "10.1.0.0/16"
+  subnets = [
+    {
+      cidr                    = "10.1.0.0/24"
+      availability_zone       = "us-west-2a"
+      map_public_ip_on_launch = true
+      create_nat              = true
+    },
+    {
+      cidr              = "10.1.1.0/24"
+      availability_zone = "us-west-2b"
+      forward_to        = "10.1.0.0/24"
+    }
+  ]
+}
+```
+
+## Documentation
+
+Full documentation is available at
+[infrahouse.github.io/terraform-aws-service-network](https://infrahouse.github.io/terraform-aws-service-network/).
+
+## Usage
+
+### Management network
+
+A management network is detected when `management_cidr_block == vpc_cidr_block`.
+It acts as a hub that can communicate with all service networks.
 
 ```hcl
 module "management" {
-  source  = "infrahouse/service-network/aws"
+  source  = "registry.infrahouse.com/infrahouse/service-network/aws"
   version = "3.2.2"
 
-  environment           = "dev"
+  environment           = "production"
   service_name          = "management"
   vpc_cidr_block        = "10.1.0.0/16"
   management_cidr_block = "10.1.0.0/16"
   subnets = [
     {
       cidr                    = "10.1.0.0/24"
-      availability-zone       = "${var.region}a"
+      availability_zone       = "us-west-2a"
       map_public_ip_on_launch = true
       create_nat              = true
-      forward_to              = null
     },
     {
-      cidr                    = "10.1.1.0/24"
-      availability-zone       = "${var.region}b"
-      map_public_ip_on_launch = false
-      create_nat              = false
-      forward_to              = "10.1.0.0/24"
+      cidr              = "10.1.1.0/24"
+      availability_zone = "us-west-2b"
+      forward_to        = "10.1.0.0/24"
     },
     {
-      cidr                    = "10.1.2.0/24"
-      availability-zone       = "${var.region}c"
-      map_public_ip_on_launch = false
-      create_nat              = false
-      forward_to              = "10.1.0.0/24"
+      cidr              = "10.1.2.0/24"
+      availability_zone = "us-west-2c"
+      forward_to        = "10.1.0.0/24"
     }
   ]
 }
 ```
 
-Service network (for website or other service).
+### Service network
+
+Service networks (where `management_cidr_block != vpc_cidr_block`) automatically
+peer with the management VPC, creating a hub-and-spoke topology where service
+networks are isolated from each other but can communicate through the management network.
 
 ```hcl
 module "website" {
-  source  = "infrahouse/service-network/aws"
+  source  = "registry.infrahouse.com/infrahouse/service-network/aws"
   version = "3.2.2"
 
-  environment           = "dev"
+  environment           = "production"
   service_name          = "website"
   vpc_cidr_block        = "10.3.0.0/16"
   management_cidr_block = "10.1.0.0/16"
   subnets = [
     {
       cidr                    = "10.3.0.0/24"
-      availability-zone       = "${var.region}a"
+      availability_zone       = "us-west-2a"
       map_public_ip_on_launch = true
       create_nat              = true
-      forward_to              = null
     },
     {
-      cidr                    = "10.3.1.0/24"
-      availability-zone       = "${var.region}b"
-      map_public_ip_on_launch = false
-      create_nat              = false
-      forward_to              = "10.3.0.0/24"
-      tags                    = {
-        region = "${var.region}b"
+      cidr              = "10.3.1.0/24"
+      availability_zone = "us-west-2b"
+      forward_to        = "10.3.0.0/24"
+      tags = {
+        region = "us-west-2b"
       }
     }
   ]
 }
 ```
+
+## Examples
+
+See the [test_data/service_network](test_data/service_network/) directory for
+a working example used in integration tests.
+
+<!-- BEGIN_TF_DOCS -->
+
 ## Requirements
 
 | Name | Version |
@@ -128,7 +176,7 @@ No modules.
 | [aws_subnet.all](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
 | [aws_vpc_endpoint.s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
-| [aws_vpc_endpoint_route_table_association.example](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint_route_table_association) | resource |
+| [aws_vpc_endpoint_route_table_association.s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint_route_table_association) | resource |
 | [aws_vpc_peering_connection.link_to_management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_peering_connection) | resource |
 | [aws_vpc_security_group_egress_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
@@ -142,18 +190,20 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_default_security_group_cidr"></a> [default\_security\_group\_cidr](#input\_default\_security\_group\_cidr) | CIDR block for the default security group rules when restrict\_all\_traffic is false.<br/>If null, defaults to the VPC CIDR block. | `string` | `null` | no |
 | <a name="input_enable_dns_hostnames"></a> [enable\_dns\_hostnames](#input\_enable\_dns\_hostnames) | A boolean flag to enable/disable DNS hostnames in the VPC. Defaults true. | `bool` | `true` | no |
 | <a name="input_enable_dns_support"></a> [enable\_dns\_support](#input\_enable\_dns\_support) | A boolean flag to enable/disable DNS support in the VPC. Defaults true. | `bool` | `true` | no |
 | <a name="input_enable_resource_name_dns_a_record_on_launch"></a> [enable\_resource\_name\_dns\_a\_record\_on\_launch](#input\_enable\_resource\_name\_dns\_a\_record\_on\_launch) | Indicates whether to respond to DNS queries for instance hostnames with DNS A records. | `bool` | `false` | no |
 | <a name="input_enable_vpc_flow_logs"></a> [enable\_vpc\_flow\_logs](#input\_enable\_vpc\_flow\_logs) | Whether to enable VPC Flow Logs. Default, true. | `bool` | `true` | no |
-| <a name="input_environment"></a> [environment](#input\_environment) | Name of environment | `string` | `"development"` | no |
+| <a name="input_environment"></a> [environment](#input\_environment) | Name of environment | `string` | n/a | yes |
+| <a name="input_flow_logs_force_destroy"></a> [flow\_logs\_force\_destroy](#input\_flow\_logs\_force\_destroy) | Whether to force destroy the VPC flow logs S3 bucket and all its contents on deletion. | `bool` | `false` | no |
 | <a name="input_management_cidr_block"></a> [management\_cidr\_block](#input\_management\_cidr\_block) | Management VPC cidr block | `string` | n/a | yes |
 | <a name="input_restrict_all_traffic"></a> [restrict\_all\_traffic](#input\_restrict\_all\_traffic) | Whether the default security group should deny all traffic | `bool` | `true` | no |
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | Descriptive name of a service that will use this VPC | `string` | n/a | yes |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | List of subnets in the VPC | <pre>list(<br/>    object(<br/>      {<br/>        cidr                    = string<br/>        availability-zone       = string<br/>        map_public_ip_on_launch = optional(bool, false)<br/>        create_nat              = optional(bool, false)<br/>        forward_to              = optional(string, null)<br/>        tags                    = optional(map(string), {})<br/>      }<br/>    )<br/>  )</pre> | `[]` | no |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | List of subnets in the VPC | <pre>list(<br/>    object(<br/>      {<br/>        cidr                    = string<br/>        availability_zone       = optional(string, null)<br/>        availability-zone       = optional(string, null) # Deprecated, use availability_zone<br/>        map_public_ip_on_launch = optional(bool, false)<br/>        create_nat              = optional(bool, false)<br/>        forward_to              = optional(string, null)<br/>        tags                    = optional(map(string), {})<br/>      }<br/>    )<br/>  )</pre> | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to each resource | `map(string)` | `{}` | no |
 | <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | Block of IP addresses used for this VPC | `string` | n/a | yes |
-| <a name="input_vpc_flow_retention_days"></a> [vpc\_flow\_retention\_days](#input\_vpc\_flow\_retention\_days) | Retention period for VPC flow logs in S3 bucket. | `number` | `7` | no |
+| <a name="input_vpc_flow_retention_days"></a> [vpc\_flow\_retention\_days](#input\_vpc\_flow\_retention\_days) | Retention period for VPC flow logs in S3 bucket. | `number` | `365` | no |
 
 ## Outputs
 
@@ -169,3 +219,12 @@ No modules.
 | <a name="output_vpc_cidr_block"></a> [vpc\_cidr\_block](#output\_vpc\_cidr\_block) | The CIDR block of the VPC |
 | <a name="output_vpc_flow_bucket_name"></a> [vpc\_flow\_bucket\_name](#output\_vpc\_flow\_bucket\_name) | S3 bucket name with VPC Flow logs if enabled |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
+<!-- END_TF_DOCS -->
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+[Apache 2.0](LICENSE)
