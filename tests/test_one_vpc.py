@@ -28,8 +28,7 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
         ]
     ),
     [
-        # One VPC with no subnets
-        (
+        pytest.param(
             "10.0.0.0/16",
             "10.0.0.0/16",
             "[]",
@@ -39,9 +38,9 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             0,  # expected_subnet_private_count
             False,  # restrict_all_traffic
             False,  # enable_vpc_flow_logs
+            id="no_subnets",
         ),
-        # One VPC with no subnets, restrict all traffic
-        (
+        pytest.param(
             "10.0.0.0/16",
             "10.0.0.0/16",
             "[]",
@@ -51,9 +50,9 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             0,  # expected_subnet_private_count
             True,  # restrict_all_traffic
             False,  # enable_vpc_flow_logs
+            id="no_subnets_restricted",
         ),
-        # One VPC with one subnet
-        (
+        pytest.param(
             "192.168.0.0/24",
             "192.168.0.0/24",
             """[
@@ -72,9 +71,9 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             0,  # expected_subnet_private_count
             False,  # restrict_all_traffic
             False,  # enable_vpc_flow_logs
+            id="one_subnet",
         ),
-        # One VPC with three subnets
-        (
+        pytest.param(
             "10.1.0.0/16",
             "10.1.0.0/16",
             """[
@@ -107,9 +106,9 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             2,  # expected_subnet_private_count
             True,  # restrict_all_traffic
             True,  # enable_vpc_flow_logs
+            id="three_subnets_with_nat",
         ),
-        # One VPC with four subnets and one NAT gateway
-        (
+        pytest.param(
             "10.1.0.0/16",
             "10.1.0.0/16",
             """[
@@ -142,6 +141,7 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             2,  # expected_subnet_private_count
             True,  # restrict_all_traffic
             False,  # enable_vpc_flow_logs
+            id="four_subnets_one_nat",
         ),
     ],
 )
@@ -210,6 +210,7 @@ def test_service_network(
         enable_vpc_flow_logs=enable_vpc_flow_logs,
         test_role_arn=test_role_arn,
         zone_names=zone_names,
+        keep_after=keep_after,
     ):
         with terraform_apply(
             terraform_module_dir,

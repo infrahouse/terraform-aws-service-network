@@ -48,7 +48,12 @@ resource "aws_route" "subnet_private" {
   nat_gateway_id         = aws_nat_gateway.nat_gw[each.value.forward_to].id
 }
 
-resource "aws_route_table_association" "private_rt_assoc" {
+moved {
+  from = aws_route_table_association.private_rt_assoc
+  to   = aws_route_table_association.all
+}
+
+resource "aws_route_table_association" "all" {
   for_each       = toset([for k in var.subnets : k.cidr])
   subnet_id      = aws_subnet.all[each.key].id
   route_table_id = aws_route_table.all[each.key].id

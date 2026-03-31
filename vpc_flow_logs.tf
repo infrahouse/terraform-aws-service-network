@@ -10,7 +10,7 @@ resource "aws_flow_log" "vpc" {
 resource "aws_s3_bucket" "vpc_flow_logs" {
   count         = var.enable_vpc_flow_logs ? 1 : 0
   bucket_prefix = "vpc-flow-logs-${replace(var.service_name, " ", "-")}-"
-  force_destroy = true
+  force_destroy = var.flow_logs_force_destroy
   tags          = local.default_module_tags
 }
 
