@@ -2,9 +2,11 @@ from pprint import pformat, pprint
 
 from os import path as osp, remove
 from textwrap import dedent
+from time import sleep
 
 import pytest
 from infrahouse_core.aws.ec2_instance import EC2Instance
+from infrahouse_core.timeout import timeout
 from pytest_infrahouse import terraform_apply
 
 from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
@@ -269,11 +271,16 @@ def test_service_network(
                 len(tf_out["subnets_private"]["value"]) == expected_subnet_private_count
             )
             for instance_id in tf_out["client_instances"]["value"]:
-                assert (
-                    EC2Instance(
-                        instance_id=instance_id,
-                        region=aws_region,
-                        role_arn=test_role_arn,
-                    ).execute_command("ping -c 1 google.com")[0]
-                    == 0
+                instance = EC2Instance(
+                    instance_id=instance_id,
+                    region=aws_region,
+                    role_arn=test_role_arn,
                 )
+                with timeout(120):
+                    while True:
+                        exit_code = instance.execute_command(
+                            "ping -c 1 google.com"
+                        )[0]
+                        if exit_code == 0:
+                            break
+                        sleep(10)
