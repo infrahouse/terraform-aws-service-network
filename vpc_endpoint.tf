@@ -10,7 +10,12 @@ resource "aws_vpc_endpoint" "s3" {
   )
 }
 
-resource "aws_vpc_endpoint_route_table_association" "example" {
+moved {
+  from = aws_vpc_endpoint_route_table_association.example
+  to   = aws_vpc_endpoint_route_table_association.s3
+}
+
+resource "aws_vpc_endpoint_route_table_association" "s3" {
   for_each        = toset([for k in var.subnets : k.cidr])
   route_table_id  = aws_route_table.all[each.key].id
   vpc_endpoint_id = aws_vpc_endpoint.s3.id

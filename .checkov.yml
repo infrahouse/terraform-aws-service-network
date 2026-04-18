@@ -1,0 +1,35 @@
+---
+framework:
+  - terraform
+  - github_actions
+
+skip-path:
+  - test_data
+  - examples
+
+skip-check:
+  # VPC subnets: public IP mapping is user-configurable by design
+  - CKV_AWS_130  # Ensure VPC subnets do not assign public IP by default
+
+  # S3 flow logs bucket: access logging creates a chicken-and-egg problem
+  - CKV_AWS_18  # Ensure the S3 bucket has access logging enabled
+
+  # S3 flow logs bucket: cross-region replication is overkill for flow logs
+  - CKV_AWS_144  # Ensure that S3 bucket has cross-region replication enabled
+
+  # S3 flow logs bucket: SSE-S3 is used per coding standard (AWS-managed keys)
+  - CKV_AWS_145  # Ensure that S3 buckets are encrypted with KMS by default
+
+  # S3 flow logs bucket: event notifications not needed for flow logs
+  - CKV2_AWS_62  # Ensure S3 buckets should have event notifications enabled
+
+  # S3 flow logs bucket: abort incomplete multipart upload not critical for flow logs
+  - CKV_AWS_300  # Ensure S3 lifecycle configuration sets period for aborting failed uploads
+
+  # Default SG: module restricts all traffic by default (restrict_all_traffic=true),
+  # but checkov can't evaluate the conditional
+  - CKV2_AWS_12  # Ensure the default security group of every VPC restricts all traffic
+
+  # GitHub Actions workflows are managed by github-control
+  - CKV2_GHA_1  # Ensure top-level permissions are not set to write-all
+...

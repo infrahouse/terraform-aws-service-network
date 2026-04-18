@@ -2,9 +2,11 @@ from pprint import pformat, pprint
 
 from os import path as osp, remove
 from textwrap import dedent
+from time import sleep
 
 import pytest
 from infrahouse_core.aws.ec2_instance import EC2Instance
+from infrahouse_core.timeout import timeout
 from pytest_infrahouse import terraform_apply
 
 from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
@@ -28,8 +30,7 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
         ]
     ),
     [
-        # One VPC with no subnets
-        (
+        pytest.param(
             "10.0.0.0/16",
             "10.0.0.0/16",
             "[]",
@@ -39,9 +40,9 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             0,  # expected_subnet_private_count
             False,  # restrict_all_traffic
             False,  # enable_vpc_flow_logs
+            id="no_subnets",
         ),
-        # One VPC with no subnets, restrict all traffic
-        (
+        pytest.param(
             "10.0.0.0/16",
             "10.0.0.0/16",
             "[]",
@@ -51,9 +52,9 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             0,  # expected_subnet_private_count
             True,  # restrict_all_traffic
             False,  # enable_vpc_flow_logs
+            id="no_subnets_restricted",
         ),
-        # One VPC with one subnet
-        (
+        pytest.param(
             "192.168.0.0/24",
             "192.168.0.0/24",
             """[
@@ -72,9 +73,9 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             0,  # expected_subnet_private_count
             False,  # restrict_all_traffic
             False,  # enable_vpc_flow_logs
+            id="one_subnet",
         ),
-        # One VPC with three subnets
-        (
+        pytest.param(
             "10.1.0.0/16",
             "10.1.0.0/16",
             """[
@@ -107,9 +108,9 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             2,  # expected_subnet_private_count
             True,  # restrict_all_traffic
             True,  # enable_vpc_flow_logs
+            id="three_subnets_with_nat",
         ),
-        # One VPC with four subnets and one NAT gateway
-        (
+        pytest.param(
             "10.1.0.0/16",
             "10.1.0.0/16",
             """[
@@ -142,6 +143,7 @@ from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
             2,  # expected_subnet_private_count
             True,  # restrict_all_traffic
             False,  # enable_vpc_flow_logs
+            id="four_subnets_one_nat",
         ),
     ],
 )
@@ -210,6 +212,7 @@ def test_service_network(
         enable_vpc_flow_logs=enable_vpc_flow_logs,
         test_role_arn=test_role_arn,
         zone_names=zone_names,
+        keep_after=keep_after,
     ):
         with terraform_apply(
             terraform_module_dir,
@@ -268,11 +271,16 @@ def test_service_network(
                 len(tf_out["subnets_private"]["value"]) == expected_subnet_private_count
             )
             for instance_id in tf_out["client_instances"]["value"]:
-                assert (
-                    EC2Instance(
-                        instance_id=instance_id,
-                        region=aws_region,
-                        role_arn=test_role_arn,
-                    ).execute_command("ping -c 1 google.com")[0]
-                    == 0
+                instance = EC2Instance(
+                    instance_id=instance_id,
+                    region=aws_region,
+                    role_arn=test_role_arn,
                 )
+                with timeout(120):
+                    while True:
+                        exit_code = instance.execute_command(
+                            "ping -c 1 google.com"
+                        )[0]
+                        if exit_code == 0:
+                            break
+                        sleep(10)

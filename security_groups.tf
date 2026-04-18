@@ -15,7 +15,7 @@ resource "aws_vpc_security_group_ingress_rule" "default" {
   description       = "Allow all traffic"
   security_group_id = aws_default_security_group.default.id
   ip_protocol       = "-1"
-  cidr_ipv4         = "0.0.0.0/0"
+  cidr_ipv4         = coalesce(var.default_security_group_cidr, var.vpc_cidr_block)
   tags = merge(
     {
       Name = "incoming traffic"
@@ -30,7 +30,7 @@ resource "aws_vpc_security_group_egress_rule" "default" {
   description       = "Allow all traffic"
   security_group_id = aws_default_security_group.default.id
   ip_protocol       = "-1"
-  cidr_ipv4         = "0.0.0.0/0"
+  cidr_ipv4         = coalesce(var.default_security_group_cidr, var.vpc_cidr_block)
   tags = merge(
     {
       Name = "outgoing traffic"
