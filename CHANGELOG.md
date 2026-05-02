@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2026-05-02
+
+### Bug Fixes
+
+- Use symlink for hooks instead of pre-commit
+- Skip examples/ directory in checkov scans
+- Enable force_destroy on flow logs bucket in test data
+- Retry ping in tests to handle NAT gateway startup delay
+- Add CIDR validation for default_security_group_cidr and AZ validation for subnets
+- Anchor grep in release targets to avoid ambiguous git cliff args
+- Stage CHANGELOG.md before bumpversion in release targets
+- Commit CHANGELOG.md before bumpversion in release targets
+- Use conventional commit message format in bumpversion config
+
+### Miscellaneous Tasks
+
+- Update actions/checkout action to v5 ([#31](https://github.com/infrahouse/terraform-aws-service-network/issues/31))
+- Update actions/setup-python action to v6 ([#32](https://github.com/infrahouse/terraform-aws-service-network/issues/32))
+- Update aws-actions/configure-aws-credentials action to v5 ([#33](https://github.com/infrahouse/terraform-aws-service-network/issues/33))
+- Add claude review artifacts to gitignore, fix hook permissions
+
 ## [3.2.1] - 2025-08-30
 
 ### Miscellaneous Tasks
