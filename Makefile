@@ -66,21 +66,24 @@ clean:  ## Clean build artifacts and caches
 
 .PHONY: release-patch
 release-patch:  ## Release a patch version
-	git cliff --tag $$(bumpversion --dry-run --list patch | grep ^new_version= | cut -d= -f2) -o CHANGELOG.md
+	git cliff --tag $$(bumpversion --dry-run --allow-dirty --list patch | grep ^new_version= | cut -d= -f2) -o CHANGELOG.md
 	git add CHANGELOG.md
+	git commit -m "chore: update CHANGELOG"
 	bumpversion patch
 	git push && git push --tags
 
 .PHONY: release-minor
 release-minor:  ## Release a minor version
-	git cliff --tag $$(bumpversion --dry-run --list minor | grep ^new_version= | cut -d= -f2) -o CHANGELOG.md
+	git cliff --tag $$(bumpversion --dry-run --allow-dirty --list minor | grep ^new_version= | cut -d= -f2) -o CHANGELOG.md
 	git add CHANGELOG.md
+	git commit -m "chore: update CHANGELOG"
 	bumpversion minor
 	git push && git push --tags
 
 .PHONY: release-major
 release-major:  ## Release a major version
-	git cliff --tag $$(bumpversion --dry-run --list major | grep ^new_version= | cut -d= -f2) -o CHANGELOG.md
+	git cliff --tag $$(bumpversion --dry-run --allow-dirty --list major | grep ^new_version= | cut -d= -f2) -o CHANGELOG.md
 	git add CHANGELOG.md
+	git commit -m "chore: update CHANGELOG"
 	bumpversion major
 	git push && git push --tags
