@@ -29,7 +29,7 @@ can communicate internally and with the outside world, but not with other servic
 ```hcl
 module "network" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "3.2.2"
+  version = "4.0.0"
 
   environment           = "production"
   service_name          = "my-service"
@@ -66,7 +66,7 @@ It acts as a hub that can communicate with all service networks.
 ```hcl
 module "management" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "3.2.2"
+  version = "4.0.0"
 
   environment           = "production"
   service_name          = "management"
@@ -102,7 +102,7 @@ networks are isolated from each other but can communicate through the management
 ```hcl
 module "website" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "3.2.2"
+  version = "4.0.0"
 
   environment           = "production"
   service_name          = "website"

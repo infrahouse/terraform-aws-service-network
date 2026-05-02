@@ -36,7 +36,7 @@ service networks and is used to host common services like bastion hosts, monitor
 ```hcl
 module "network" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "3.2.2"
+  version = "4.0.0"
 
   environment           = "production"
   service_name          = "my-service"

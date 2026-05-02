@@ -4,7 +4,7 @@ data "aws_availability_zones" "available" {
 
 module "website" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "3.2.2"
+  version = "4.0.0"
 
   environment           = var.environment
   service_name          = "website"

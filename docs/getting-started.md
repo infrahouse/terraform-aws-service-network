@@ -21,7 +21,7 @@ A network is identified as the management network when
 ```hcl
 module "management" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "3.2.2"
+  version = "4.0.0"
 
   environment           = "production"
   service_name          = "management"
@@ -56,7 +56,7 @@ which triggers automatic VPC peering with the management network.
 ```hcl
 module "website" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "3.2.2"
+  version = "4.0.0"
 
   environment           = "production"
   service_name          = "website"
