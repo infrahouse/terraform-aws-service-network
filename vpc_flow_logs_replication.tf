@@ -2,7 +2,15 @@ resource "aws_s3_bucket" "vpc_flow_logs_replica" {
   region        = var.replication_region
   bucket_prefix = "vpc-flow-logs-${replace(var.service_name, " ", "-")}-replica-"
   force_destroy = var.flow_logs_force_destroy
-  tags          = local.default_module_tags
+  tags = merge(
+    local.default_module_tags,
+    {
+      "vanta-exempt:aws-s3-cross-region-replication-enabled" = join("", [
+        "Replica destination bucket",
+        " - CRR test applies to source not target",
+      ])
+    },
+  )
 }
 
 resource "aws_s3_bucket_public_access_block" "vpc_flow_logs_replica" {
