@@ -148,6 +148,10 @@ resource "aws_s3_bucket_replication_configuration" "vpc_flow_logs" {
 
     filter {}
 
+    delete_marker_replication {
+      status = "Enabled"
+    }
+
     destination {
       bucket        = aws_s3_bucket.vpc_flow_logs_replica.arn
       storage_class = "STANDARD_IA"
