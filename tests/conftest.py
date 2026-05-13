@@ -7,7 +7,6 @@ from textwrap import dedent
 
 from infrahouse_core.logging import setup_logging
 
-
 LOG = logging.getLogger()
 setup_logging(LOG, debug=True)
 TERRAFORM_ROOT_DIR = "test_data"
@@ -21,6 +20,16 @@ def update_source(path, module_path):
             fp.write(line)
 
 
+def _pick_replication_region(region: str) -> str:
+    candidates = [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2",
+    ]
+    return next(r for r in candidates if r != region)
+
+
 @contextmanager
 def create_tf_conf(
     tf_dir,
@@ -30,24 +39,19 @@ def create_tf_conf(
     subnets,
     zone_names: list,
     restrict_all_traffic: bool,
-    enable_vpc_flow_logs: bool = False,
     test_role_arn: str = None,
     keep_after: bool = False,
 ):
     config_file = osp.join(tf_dir, "terraform.tfvars")
     try:
         with open(config_file, "w") as fd:
-            fd.write(
-                dedent(
-                    f"""
+            fd.write(dedent(f"""
                     region = "{region}"
                     management_cidr_block = "{management_cidr_block}"
                     vpc_cidr_block = "{vpc_cidr_block}"
                     restrict_all_traffic = {str(restrict_all_traffic).lower()}
-                    enable_vpc_flow_logs = {str(enable_vpc_flow_logs).lower()}
-                    """
-                )
-            )
+                    replication_region = "{_pick_replication_region(region)}"
+                    """))
             subnets_fmt = f"subnets = {subnets}"
             fd.write(
                 subnets_fmt.format(
@@ -61,13 +65,9 @@ def create_tf_conf(
                 )
             )
             if test_role_arn:
-                fd.write(
-                    dedent(
-                        f"""
+                fd.write(dedent(f"""
                         role_arn      = "{test_role_arn}"
-                        """
-                    )
-                )
+                        """))
 
         LOG.info(
             "Terraform configuration: %s",

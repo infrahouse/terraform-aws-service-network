@@ -13,7 +13,7 @@ module "management" {
   restrict_all_traffic  = true
   enable_dns_hostnames  = true
   enable_dns_support    = true
-  enable_vpc_flow_logs  = true
+  replication_region    = "us-east-1"
   subnets = [
     {
       cidr                    = "10.1.0.0/24"

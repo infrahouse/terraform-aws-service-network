@@ -43,3 +43,4 @@ site/
 
 .claude/reviews
 .claude/*.local.json
+.claude/projects

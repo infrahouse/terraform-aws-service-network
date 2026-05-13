@@ -49,7 +49,6 @@ variable "restrict_all_traffic" {
   type = bool
 }
 
-variable "enable_vpc_flow_logs" {
-  type    = bool
-  default = false
+variable "replication_region" {
+  type = string
 }
