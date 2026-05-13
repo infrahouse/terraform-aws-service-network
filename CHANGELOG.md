@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.0.0] - 2026-05-13
+
+### Features
+
+- Add cross-region replication for VPC flow logs bucket ([#45](https://github.com/infrahouse/terraform-aws-service-network/issues/45))
+
 ## [4.0.0] - 2026-05-02
 
 ### Bug Fixes
@@ -22,6 +28,8 @@ All notable changes to this project will be documented in this file.
 - Update actions/setup-python action to v6 ([#32](https://github.com/infrahouse/terraform-aws-service-network/issues/32))
 - Update aws-actions/configure-aws-credentials action to v5 ([#33](https://github.com/infrahouse/terraform-aws-service-network/issues/33))
 - Add claude review artifacts to gitignore, fix hook permissions
+- Update CHANGELOG
+- Bump version to 4.0.0
 
 ## [3.2.1] - 2025-08-30
 
