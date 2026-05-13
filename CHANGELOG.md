@@ -2,11 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.0.1] - 2026-05-13
+
+### Features
+
+- Add vanta exemption tag on replica bucket
+
 ## [5.0.0] - 2026-05-13
 
 ### Features
 
 - Add cross-region replication for VPC flow logs bucket ([#45](https://github.com/infrahouse/terraform-aws-service-network/issues/45))
+
+### Miscellaneous Tasks
+
+- Update CHANGELOG
+- Bump version to 5.0.0
 
 ## [4.0.0] - 2026-05-02
 
