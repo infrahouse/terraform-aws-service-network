@@ -83,12 +83,6 @@ variable "subnets" {
   }
 }
 
-variable "enable_vpc_flow_logs" {
-  description = "Whether to enable VPC Flow Logs. Default, true."
-  type        = bool
-  default     = true
-}
-
 variable "flow_logs_force_destroy" {
   description = "Whether to force destroy the VPC flow logs S3 bucket and all its contents on deletion."
   type        = bool
@@ -102,6 +96,19 @@ variable "vpc_cidr_block" {
   validation {
     condition     = can(cidrhost(var.vpc_cidr_block, 0))
     error_message = "vpc_cidr_block must be a valid IPv4 CIDR block (e.g., 10.0.0.0/16)"
+  }
+}
+
+variable "replication_region" {
+  description = "AWS region for cross-region replication of the VPC flow logs bucket."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[a-z]{2}(-[a-z]+-[0-9]+)$", var.replication_region))
+    error_message = <<-EOT
+      replication_region must be a valid AWS region name
+      (e.g., us-east-1, eu-west-2). Got: ${var.replication_region}
+    EOT
   }
 }
 

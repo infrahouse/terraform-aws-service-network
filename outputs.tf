@@ -51,6 +51,6 @@ output "route_table_all_ids" {
 }
 
 output "vpc_flow_bucket_name" {
-  description = "S3 bucket name with VPC Flow logs if enabled"
-  value       = var.enable_vpc_flow_logs ? aws_s3_bucket.vpc_flow_logs[0].bucket : null
+  description = "S3 bucket name with VPC Flow logs"
+  value       = aws_s3_bucket.vpc_flow_logs[0].bucket
 }

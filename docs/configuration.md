@@ -42,6 +42,15 @@ management_cidr_block = "10.1.0.0/16"  # same as vpc_cidr_block
 management_cidr_block = "10.1.0.0/16"  # different from vpc_cidr_block
 ```
 
+### `replication_region`
+
+The AWS region for cross-region replication of the VPC Flow Logs S3 bucket. Must be
+a different region than the one the module is deployed in.
+
+```hcl
+replication_region = "us-east-1"
+```
+
 ## Subnet Configuration
 
 ### `subnets`
@@ -113,10 +122,12 @@ default_security_group_cidr = null  # Default: null
 
 ### VPC Flow Logs
 
-```hcl
-# Enable/disable VPC Flow Logs
-enable_vpc_flow_logs = true  # Default: true
+VPC Flow Logs are always enabled. The flow logs bucket is automatically replicated
+to `replication_region` via Cross-Region Replication (CRR). A replica S3 bucket is
+created in the target region with matching encryption, versioning, lifecycle, and
+access policies.
 
+```hcl
 # Retention period in days (365 for ISO/SOC compliance)
 vpc_flow_retention_days = 365  # Default: 365
 

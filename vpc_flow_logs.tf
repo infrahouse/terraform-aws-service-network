@@ -1,5 +1,5 @@
 resource "aws_flow_log" "vpc" {
-  count                = var.enable_vpc_flow_logs ? 1 : 0
+  count                = 1
   log_destination      = aws_s3_bucket.vpc_flow_logs[count.index].arn
   log_destination_type = "s3"
   traffic_type         = "ALL"
@@ -8,14 +8,14 @@ resource "aws_flow_log" "vpc" {
 }
 
 resource "aws_s3_bucket" "vpc_flow_logs" {
-  count         = var.enable_vpc_flow_logs ? 1 : 0
+  count         = 1
   bucket_prefix = "vpc-flow-logs-${replace(var.service_name, " ", "-")}-"
   force_destroy = var.flow_logs_force_destroy
   tags          = local.default_module_tags
 }
 
 resource "aws_s3_bucket_public_access_block" "public_access" {
-  count                   = var.enable_vpc_flow_logs ? 1 : 0
+  count                   = 1
   bucket                  = aws_s3_bucket.vpc_flow_logs[count.index].id
   block_public_acls       = true
   block_public_policy     = true
@@ -24,7 +24,7 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
 }
 
 resource "aws_s3_bucket_versioning" "enabled" {
-  count  = var.enable_vpc_flow_logs ? 1 : 0
+  count  = 1
   bucket = aws_s3_bucket.vpc_flow_logs[count.index].id
   versioning_configuration {
     status = "Enabled"
@@ -32,7 +32,7 @@ resource "aws_s3_bucket_versioning" "enabled" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "default" {
-  count  = var.enable_vpc_flow_logs ? 1 : 0
+  count  = 1
   bucket = aws_s3_bucket.vpc_flow_logs[count.index].id
   rule {
     apply_server_side_encryption_by_default {
@@ -43,7 +43,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "default" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "vpc_flow_logs" {
-  count  = var.enable_vpc_flow_logs ? 1 : 0
+  count  = 1
   bucket = aws_s3_bucket_versioning.enabled[count.index].bucket
   rule {
     id     = "delete-old"
@@ -61,13 +61,13 @@ resource "aws_s3_bucket_lifecycle_configuration" "vpc_flow_logs" {
 }
 
 resource "aws_s3_bucket_policy" "vpc_flow_logs" {
-  count  = var.enable_vpc_flow_logs ? 1 : 0
+  count  = 1
   bucket = aws_s3_bucket.vpc_flow_logs[count.index].id
   policy = data.aws_iam_policy_document.vpc_flow_logs[count.index].json
 }
 
 data "aws_iam_policy_document" "vpc_flow_logs" {
-  count = var.enable_vpc_flow_logs ? 1 : 0
+  count = 1
   statement {
     sid    = "AllowSSLRequestsOnly"
     effect = "Deny"

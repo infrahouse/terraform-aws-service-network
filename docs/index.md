@@ -27,6 +27,7 @@ service networks and is used to host common services like bastion hosts, monitor
     - Custom tags
 - Automatic hub-and-spoke peering with a management VPC
 - VPC Flow Logs to S3 with 365-day retention (ISO/SOC compliant)
+- Cross-Region Replication (CRR) of VPC Flow Logs bucket for disaster recovery
 - S3 gateway endpoint for private S3 access
 - Restrictive default security group (configurable)
 - Internet Gateway and optional per-subnet NAT Gateways with Elastic IPs
@@ -42,6 +43,7 @@ module "network" {
   service_name          = "my-service"
   vpc_cidr_block        = "10.1.0.0/16"
   management_cidr_block = "10.1.0.0/16"
+  replication_region    = "us-east-1"
   subnets = [
     {
       cidr                    = "10.1.0.0/24"

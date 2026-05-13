@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Terraform >= 1.0
-- AWS provider >= 5.11, < 7.0
+- AWS provider >= 6.0, < 7.0
 - An AWS account with permissions to create VPCs, subnets, route tables,
   internet gateways, NAT gateways, S3 buckets, and VPC peering connections
 - Access to the InfraHouse Terraform registry (`registry.infrahouse.com`)
@@ -27,6 +27,7 @@ module "management" {
   service_name          = "management"
   vpc_cidr_block        = "10.1.0.0/16"
   management_cidr_block = "10.1.0.0/16"
+  replication_region    = "us-east-1"
   subnets = [
     {
       cidr                    = "10.1.0.0/24"
@@ -62,6 +63,7 @@ module "website" {
   service_name          = "website"
   vpc_cidr_block        = "10.3.0.0/16"
   management_cidr_block = "10.1.0.0/16"
+  replication_region    = "us-east-1"
   subnets = [
     {
       cidr                    = "10.3.0.0/24"
