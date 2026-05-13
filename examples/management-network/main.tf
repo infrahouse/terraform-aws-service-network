@@ -4,7 +4,7 @@ data "aws_availability_zones" "available" {
 
 module "management" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "4.0.0"
+  version = "5.0.0"
 
   environment           = "production"
   service_name          = "management"
