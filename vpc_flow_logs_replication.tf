@@ -146,6 +146,8 @@ resource "aws_s3_bucket_replication_configuration" "vpc_flow_logs" {
     id     = "replicate-all"
     status = "Enabled"
 
+    filter {}
+
     destination {
       bucket        = aws_s3_bucket.vpc_flow_logs_replica.arn
       storage_class = "STANDARD_IA"
