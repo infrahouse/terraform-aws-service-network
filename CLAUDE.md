@@ -20,13 +20,14 @@ make lint           # Check Terraform formatting: terraform fmt --check -recursi
 ```
 
 Tests are pytest-based integration tests that deploy real AWS infrastructure.
-They use `pytest-infrahouse` fixtures and `infrahouse-core` helpers. Tests are
-parametrized across AWS provider versions (~5.11 and ~6.0). Expect long run
-times (CI timeout is 120 minutes).
+They use `pytest-infrahouse` fixtures and `infrahouse-core` helpers. Tests run
+against AWS provider ~6.0 only (the module requires `>= 6.0, < 7.0`). Expect
+long run times (CI timeout is 120 minutes).
 
-Run a single test scenario:
+Run a single test scenario (scenario ids: `no_subnets`, etc. — see the
+`pytest.param` ids in `tests/test_one_vpc.py`):
 ```bash
-pytest -xvvs tests/test_one_vpc.py -k "aws-5-management_cidr_block0"
+pytest -xvvs tests/test_one_vpc.py -k no_subnets
 ```
 
 ## Architecture
