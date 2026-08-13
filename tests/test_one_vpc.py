@@ -7,9 +7,11 @@ from time import sleep
 import pytest
 from infrahouse_core.aws.ec2_instance import EC2Instance
 from infrahouse_core.timeout import timeout
-from pytest_infrahouse import terraform_apply
-
-from tests.conftest import create_tf_conf, TERRAFORM_ROOT_DIR
+from tests.conftest import (
+    create_tf_conf,
+    terraform_apply_with_retries,
+    TERRAFORM_ROOT_DIR,
+)
 
 
 @pytest.mark.parametrize("aws_provider_version", ["~> 6.0"], ids=["aws-6"])
@@ -200,7 +202,7 @@ def test_service_network(
         zone_names=zone_names,
         keep_after=keep_after,
     ):
-        with terraform_apply(
+        with terraform_apply_with_retries(
             terraform_module_dir,
             json_output=True,
             var_file="terraform.tfvars",

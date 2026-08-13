@@ -1,11 +1,14 @@
 import logging
 import os
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from os import path as osp
+from subprocess import CalledProcessError
 
 from textwrap import dedent
+from typing import Iterator
 
 from infrahouse_core.logging import setup_logging
+from pytest_infrahouse import terraform_apply
 
 LOG = logging.getLogger()
 setup_logging(LOG, debug=True)
@@ -18,6 +21,47 @@ def update_source(path, module_path):
         for line in lines:
             line = line.replace("%SOURCE%", module_path)
             fp.write(line)
+
+
+@contextmanager
+def terraform_apply_with_retries(
+    path: str, max_attempts: int = 3, **kwargs
+) -> Iterator[dict]:
+    """
+    Wrap ``pytest_infrahouse.terraform_apply``, retrying the apply phase.
+
+    Works around transient AWS errors, most notably ``PutBucketReplication``
+    failing with ``MissingRequestBodyError`` shortly after bucket creation
+    (https://github.com/infrahouse/terraform-aws-s3-bucket/issues/27).
+    A failed apply is destroyed by ``terraform_apply`` itself, so every
+    attempt starts from a clean slate. Only the apply phase is retried;
+    exceptions raised by the test body propagate immediately, and the
+    teardown (destroy) runs once via the exit stack.
+
+    :param path: Path to a directory with the terraform root module.
+    :type path: str
+    :param max_attempts: Total number of apply attempts before giving up.
+    :type max_attempts: int
+    :param kwargs: Passed through to ``terraform_apply``.
+    :return: Context manager yielding the ``terraform_apply`` result.
+    :raise CalledProcessError: if the apply fails ``max_attempts`` times.
+    """
+    with ExitStack() as stack:
+        tf_out = None
+        for attempt in range(1, max_attempts + 1):
+            try:
+                tf_out = stack.enter_context(terraform_apply(path, **kwargs))
+                break
+            except CalledProcessError as err:
+                if attempt >= max_attempts:
+                    raise
+                LOG.warning(
+                    "terraform apply attempt %d/%d failed: %s. Retrying...",
+                    attempt,
+                    max_attempts,
+                    err,
+                )
+        yield tf_out
 
 
 def _pick_replication_region(region: str) -> str:
