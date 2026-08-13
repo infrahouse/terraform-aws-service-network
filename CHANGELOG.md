@@ -2,11 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.0.2] - 2026-08-13
+
+### Bug Fixes
+
+- Truncate flow logs replica bucket_prefix to 37-char AWS limit
+
+### Documentation
+
+- Implement Terraform module requirements
+
+### Testing
+
+- Retry terraform apply to work around transient AWS errors
+
 ## [5.0.1] - 2026-05-13
 
 ### Features
 
 - Add vanta exemption tag on replica bucket
+
+### Miscellaneous Tasks
+
+- Update CHANGELOG
+- Bump version to 5.0.1
 
 ## [5.0.0] - 2026-05-13
 
