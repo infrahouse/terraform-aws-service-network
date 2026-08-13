@@ -27,8 +27,8 @@ got vpc-flow-logs-service-network-replica-
 produced a replica bucket prefix that exceeded the AWS limit
 ([#46](https://github.com/infrahouse/terraform-aws-service-network/issues/46)).
 
-**Fix:** Upgrade to a module release that includes the fix (see the
-[changelog](changelog.md)), or shorten `service_name` to 14 characters or fewer.
+**Fix:** Upgrade to module version 5.0.2 or later, or shorten `service_name` to
+14 characters or fewer.
 
 ## `Each subnet must specify either availability_zone or availability-zone`
 
@@ -95,5 +95,5 @@ denies all traffic, per compliance requirements.
 **Cause:** AWS provider 6.x deprecated the `name` attribute of the `aws_region` data
 source in favor of `region`. Module versions up to 5.0.1 still reference `name`.
 
-**Fix:** The warning is harmless. Upgrade to a module release that includes the fix to
+**Fix:** The warning is harmless. Upgrade to module version 5.0.2 or later to
 silence it.

@@ -16,7 +16,7 @@ data "aws_availability_zones" "available" {
 
 module "management" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "5.0.1"
+  version = "5.0.2"
 
   environment           = "production"
   service_name          = "management"
@@ -47,7 +47,7 @@ hub. The module creates the VPC peering connection and routes on both sides auto
 ```hcl
 module "website" {
   source  = "registry.infrahouse.com/infrahouse/service-network/aws"
-  version = "5.0.1"
+  version = "5.0.2"
 
   environment           = "production"
   service_name          = "website"
