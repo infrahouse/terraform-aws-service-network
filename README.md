@@ -14,6 +14,22 @@ A Terraform module that creates isolated AWS VPC "service networks" with an opti
 management network peering topology. Each service network is an island where instances
 can communicate internally and with the outside world, but not with other service networks.
 
+## Why This Module?
+
+Generic VPC modules give you a VPC and leave the network topology up to you. This module
+encodes an opinionated, security-first topology instead:
+
+- **Isolation by design** — every service network is an island. Two service networks cannot
+  reach each other directly, so a compromise of one service does not expose the others.
+- **Hub-and-spoke without the wiring** — point a service network at the management CIDR and
+  the module creates the VPC peering connection and all routes on both sides. No separate
+  peering module, no manual route management.
+- **Compliance built in** — VPC Flow Logs to S3 with 365-day retention, cross-region
+  replication of the log bucket, TLS-only bucket policies, and a default security group
+  that denies all traffic — aligned with ISO 27001 and SOC 2 requirements out of the box.
+- **Tested against real AWS** — every change is verified by integration tests that deploy
+  actual VPCs, EC2 instances, and peering connections.
+
 ## Features
 
 - Creates a VPC with configurable CIDR block and DNS settings
@@ -56,7 +72,20 @@ module "network" {
 ## Documentation
 
 Full documentation is available at
-[infrahouse.github.io/terraform-aws-service-network](https://infrahouse.github.io/terraform-aws-service-network/).
+[infrahouse.github.io/terraform-aws-service-network](https://infrahouse.github.io/terraform-aws-service-network/):
+
+- [Getting Started](https://infrahouse.github.io/terraform-aws-service-network/getting-started/) —
+  prerequisites and first deployment
+- [Configuration](https://infrahouse.github.io/terraform-aws-service-network/configuration/) —
+  all variables explained
+- [Architecture](https://infrahouse.github.io/terraform-aws-service-network/architecture/) —
+  how the module works
+- [Examples](https://infrahouse.github.io/terraform-aws-service-network/examples/) —
+  common use cases
+- [Troubleshooting](https://infrahouse.github.io/terraform-aws-service-network/troubleshooting/) —
+  common issues and fixes
+- [Changelog](https://infrahouse.github.io/terraform-aws-service-network/changelog/) —
+  release history
 
 ## Usage
 
@@ -148,7 +177,7 @@ a working example used in integration tests.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0, < 7.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.59.0 |
 
 ## Modules
 
