@@ -102,7 +102,7 @@ data "aws_iam_policy_document" "vpc_flow_logs" {
     condition {
       test = "ArnLike"
       values = [
-        "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
+        "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*"
       ]
       variable = "aws:SourceArn"
     }
@@ -145,7 +145,7 @@ data "aws_iam_policy_document" "vpc_flow_logs" {
     condition {
       test = "ArnLike"
       values = [
-      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"]
+      "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*"]
       variable = "aws:SourceArn"
     }
     condition {
