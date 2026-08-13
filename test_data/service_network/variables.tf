@@ -15,7 +15,9 @@ variable "role_arn" {
 variable "service_name" {
   description = "Descriptive name of a service that will use this VPC"
   type        = string
-  default     = "my service"
+  # Longer than 14 characters so tests exercise the replica bucket_prefix
+  # truncation (https://github.com/infrahouse/terraform-aws-service-network/issues/46)
+  default = "my longer service"
 }
 
 variable "management_cidr_block" {

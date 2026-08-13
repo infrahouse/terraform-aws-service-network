@@ -1,6 +1,7 @@
 resource "aws_s3_bucket" "vpc_flow_logs_replica" {
-  region        = var.replication_region
-  bucket_prefix = "vpc-flow-logs-${replace(var.service_name, " ", "-")}-replica-"
+  region = var.replication_region
+  # AWS limits bucket_prefix to 37 characters
+  bucket_prefix = substr("vpc-flow-logs-${replace(var.service_name, " ", "-")}-replica-", 0, 37)
   force_destroy = var.flow_logs_force_destroy
   tags = merge(
     local.default_module_tags,
@@ -168,10 +169,10 @@ resource "aws_s3_bucket_replication_configuration" "vpc_flow_logs" {
 
   lifecycle {
     precondition {
-      condition     = var.replication_region != data.aws_region.current.name
+      condition     = var.replication_region != data.aws_region.current.region
       error_message = <<-EOT
         replication_region must be different from the current region
-        (${data.aws_region.current.name}). Got: ${var.replication_region}
+        (${data.aws_region.current.region}). Got: ${var.replication_region}
       EOT
     }
   }
